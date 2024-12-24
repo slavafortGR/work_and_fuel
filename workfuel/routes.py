@@ -93,3 +93,11 @@ def register_user_post():
     else:
         flash('Неверные регистрационные данные', 'danger')
         return render_template('login_register.html', registration_form=registration_form)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('login_user_get'))
+
+
