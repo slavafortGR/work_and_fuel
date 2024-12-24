@@ -1,6 +1,6 @@
 from flask import render_template,redirect, request, url_for, flash, session
-from workfuel import app
-from workfuel.forms import LoginForm
+from workfuel import app, db
+from workfuel.forms import LoginForm, RegistrationForm
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -45,3 +45,50 @@ def login_user_post():
 
     flash('Некорректный ввод данных. Проверьте и введите заново', 'danger')
     return redirect(url_for("login_user_get"))
+
+
+@app.route('/register', methods=['GET'])
+def register_user_get():
+    registration_form = RegistrationForm(request.form)
+    return render_template('login_register.html', registration_form=registration_form)
+
+
+@app.route('/register', methods=['POST'])
+def register_user_post():
+    registration_form = RegistrationForm(request.form)
+
+    if registration_form.validate_on_submit():
+        first_name = registration_form.first_name.data
+        last_name = registration_form.last_name.data
+        nick_name = registration_form.nick_name.data
+        password = registration_form.password.data
+        email = registration_form.email.data
+
+        if User.query.filter_by(nick_name=nick_name).first() is not None:
+            flash('Такой ник уже существует','danger')
+            return render_template('login_register.html', registration_form=registration_form)
+
+        if User.query.filter_by(email=email).first() is not None:
+            flash('Такой мэйл уже существует', 'danger')
+            return render_template('login_register.html', registration_form=registration_form)
+
+        new_user = User(
+            first_name=first_name,
+            last_name=last_name,
+            nick_name=nick_name,
+            password=generate_password_hash(password),
+            email=email
+        )
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash('Вы успешно зарегистрировались', 'success')
+            return redirect(url_for('login_user_get'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Произошла ошибка: {str(e)}', 'danger')
+    else:
+        flash('Неверные регистрационные данные', 'danger')
+        return render_template('login_register.html', registration_form=registration_form)
