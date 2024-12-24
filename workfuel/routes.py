@@ -28,7 +28,7 @@ def login_user_get():
     return render_template('login_register.html', login_tab=True, login_form=login_form)
 
 
-@app.route("/login", methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login_user_post():
     login_form = LoginForm(request.form)
 

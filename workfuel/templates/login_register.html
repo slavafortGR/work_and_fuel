@@ -3,7 +3,7 @@
 {% block content %}
 {% if login_tab %}
     <div>
-        <h2>Логин</h2>
+        <h2>Вход в систему</h2>
         <form action="/login" method="POST">
             <div>
                 {{ login_form.hidden_tag() }}
@@ -20,5 +20,36 @@
 {% endif %}
 
 {% if register_tab %}
+<div>
+    <h2>Регистрация</h2>
+    <form action="/register" method="POST">
+        <div>
+            {{ registration_form.hidden_tag() }}
+            <label class="form-label"><strong>Имя:</strong></label>
+            {{ registration_form.first_name(class="form-control", autofocus=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Фамилия:</strong></label>
+            {{ registration_form.last_name(class="form-control") }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Табельный номер:</strong></label>
+            {{ registration_form.first_name(class="form-control") }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Почта:</strong></label>
+            {{ registration_form.first_name(class="form-control") }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Пароль:</strong></label>
+            {{ registration_form.first_name(class="form-control") }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Подтвердить пароль:</strong></label>
+            {{ registration_form.first_name(class="form-control") }}
+        </div>
+        <input type="submit" class="btn btn-primary btn-sm" value="Зарегистрироваться">
+    </form>
+</div>
 {% endif %}
 {% endblock %}
