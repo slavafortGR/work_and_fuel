@@ -14,6 +14,7 @@ class User(db.Model):
 
 class Locomotive(db.Model):
     __tablename__ = 'locomotives'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     locomotive_number = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -34,8 +35,8 @@ class Fuel(db.Model):
 class WorkTime(db.Model):
     __tablename__ = 'worktime'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    start_working = db.Column(db.Datatime, default=datetime.utcnow, nullable=False)
-    end_working = db.Column(db.Datatime, nullable=False)
+    start_of_work = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    end_of_work = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
@@ -66,8 +67,8 @@ class ReserveRun(db.Model):
     __tablename__ = 'reserveruns'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     train_number = db.Column(db.Integer, nullable=False)
-    start_run_reserve = db.Column(db.Datatime, nullable=False)
-    end_run_reserve = db.Column(db.Datatime, nullable=False)
+    start_run_reserve = db.Column(db.DateTime, nullable=False)
+    end_run_reserve = db.Column(db.DateTime, nullable=False)
     start_station = db.Column(db.String(25), nullable=False)
     end_station = db.Column(db.String(25), nullable=False)
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
@@ -82,19 +83,19 @@ class Driver(db.Model):
     password = db.Column(db.String(1024), nullable=False)
 
 
-class Locomotive(db.Model):
-    __tablename__ = 'locomotives'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    locomotive_number = db.Column(db.String(20), nullable=False)
-    route_number = db.Column(db.Integer, nullable=False, unique=True)
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=False)
-    beginning_fuel_liters = db.Column(db.Integer, default=0, nullable=False)
-    beginning_fuel_kg = db.Column(db.Float, default=0, nullable=False)
-    end_fuel_litres = db.Column(db.Integer, default=0, nullable=False)
-    end_fuel_kg = db.Column(db.Float, default=0, nullable=False)
-    specific_weight = db.Column(db.Float, default=0, nullable=False)
-    norm_spend_fuel = db.Column(db.Float, default=0, nullable=False)
-    fact_spend_fuel = db.Column(db.Float, default=0, nullable=False)
-    description_of_reasons = db.Column(db.String(200), nullable=True)
-    owner = db.Column(db.Integer, db.ForeignKey("drivers.id"), nullable=False)
+# class Locomotive(db.Model):
+#     __tablename__ = 'locomotives'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     locomotive_number = db.Column(db.String(20), nullable=False)
+#     route_number = db.Column(db.Integer, nullable=False, unique=True)
+#     start_time = db.Column(db.DateTime, nullable=False)
+#     end_time = db.Column(db.DateTime, nullable=False)
+#     beginning_fuel_liters = db.Column(db.Integer, default=0, nullable=False)
+#     beginning_fuel_kg = db.Column(db.Float, default=0, nullable=False)
+#     end_fuel_litres = db.Column(db.Integer, default=0, nullable=False)
+#     end_fuel_kg = db.Column(db.Float, default=0, nullable=False)
+#     specific_weight = db.Column(db.Float, default=0, nullable=False)
+#     norm_spend_fuel = db.Column(db.Float, default=0, nullable=False)
+#     fact_spend_fuel = db.Column(db.Float, default=0, nullable=False)
+#     description_of_reasons = db.Column(db.String(200), nullable=True)
+#     owner = db.Column(db.Integer, db.ForeignKey("drivers.id"), nullable=False)

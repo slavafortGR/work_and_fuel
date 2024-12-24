@@ -1,6 +1,7 @@
 from flask import render_template,redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm
+from workfuel.models import User
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -21,21 +22,21 @@ def return_profile():
             return redirect('login_user_get')
 
 
-@app.route('login', method=['GET'])
+@app.route('/login', methods=['GET'])
 def login_user_get():
     login_form = LoginForm(request.form)
-    return render_template('login_register.html')
+    return render_template('login_register.html', login_tab=True, login_form=login_form)
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=['POST'])
 def login_user_post():
     login_form = LoginForm(request.form)
 
     if login_form.validate_on_submit():
-        nick_name = login_form.nick_name.data
+        personnel_number = login_form.personnel_number.data
         password = login_form.password.data
 
-        user = User.query.filter_by(nick_name=nick_name).first()
+        user = User.query.filter_by(personnel_number=personnel_number).first()
         if not user or not check_password_hash(user.password, password):
             flash('Неверный логин либо пароль', 'danger')
             return redirect(url_for('login_user_get'))
@@ -50,7 +51,7 @@ def login_user_post():
 @app.route('/register', methods=['GET'])
 def register_user_get():
     registration_form = RegistrationForm(request.form)
-    return render_template('login_register.html', registration_form=registration_form)
+    return render_template('login_register.html', register_tab=True, registration_form=registration_form)
 
 
 @app.route('/register', methods=['POST'])
@@ -60,11 +61,11 @@ def register_user_post():
     if registration_form.validate_on_submit():
         first_name = registration_form.first_name.data
         last_name = registration_form.last_name.data
-        nick_name = registration_form.nick_name.data
+        personnel_number = registration_form.personnel_number.data
         password = registration_form.password.data
         email = registration_form.email.data
 
-        if User.query.filter_by(nick_name=nick_name).first() is not None:
+        if User.query.filter_by(personnel_number=personnel_number).first() is not None:
             flash('Такой ник уже существует','danger')
             return render_template('login_register.html', registration_form=registration_form)
 
@@ -75,7 +76,7 @@ def register_user_post():
         new_user = User(
             first_name=first_name,
             last_name=last_name,
-            nick_name=nick_name,
+            personnel_number=personnel_number,
             password=generate_password_hash(password),
             email=email
         )
