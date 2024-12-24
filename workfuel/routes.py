@@ -9,6 +9,18 @@ def return_main_page():
     return render_template('main_page.html')
 
 
+@app.route('/profile')
+def return_profile():
+    user_id = session.get('user_id')
+    if user_id:
+        if user_id:
+            user = User.query.filter_by(id=user_id).first()
+            return render_template('profile.html', user=user)
+        else:
+            flash('Нужно войти в систему', 'danger')
+            return redirect('login_user_get')
+
+
 @app.route('login', method=['GET'])
 def login_user_get():
     login_form = LoginForm(request.form)
