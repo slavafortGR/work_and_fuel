@@ -1,7 +1,7 @@
 from flask import render_template,redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm
-from workfuel.models import User
+from workfuel.models import User, WorkTime, Locomotive, Fuel
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -13,10 +13,29 @@ def return_main_page():
 @app.route('/profile')
 def return_profile():
     user_id = session.get('user_id')
+    locomotive_id = session.get('locomotive_id')
     if user_id:
         if user_id:
             user = User.query.filter_by(id=user_id).first()
-            return render_template('profile.html', user=user)
+            date_of_work = WorkTime.filter_by(owner=user_id).all()
+            locomotive = Locomotive.filter_by(owner=user_id).first()
+            fuel_data = Fuel.filter_by(owner=locomotive_id).all()
+            specific_weight = Fuel.filter_by()
+
+            combined_data = [
+                {
+                    'date': date_of_work,
+                    'locomotive': locomotive,
+                    'beginning_fuel_liters': beginning_fuel_liters,
+                    'end_fuel_litres': end_fuel_litres,
+                    'specific_weight': specific_weight
+                }
+                for date, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight in zip(
+                date_of_work, locomotive, fuel_data, specific_weight
+                )
+            ]
+
+            return render_template('profile.html', user=user, combined_data=combined_data)
         else:
             flash('Нужно войти в систему', 'danger')
             return redirect('login_user_get')

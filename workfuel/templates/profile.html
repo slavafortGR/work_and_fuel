@@ -1,4 +1,43 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<div>
+    <ul>
+        <li>
+            <span><strong>Имя:</strong> {{ user.first_name }}</span>
+        </li>
+        <li>
+            <span><strong>Фамилия:</strong> {{ user.last_name }}</span>
+        </li>
+        <li>
+            <span><strong>Табельный номер:</strong> {{ user.personnel_number }}</span>
+        </li>
+    </ul>
+</div>
+
+<div>
+    <h2 >Список смен</h2>
+    <a href='/create'>Создать смену</a>
+    <hr/>
+    {% for work in combined_data %}
+        <ul>
+            <li>
+                <span><strong>Дата: </strong> {{ work.date_of_work.strftime("%d.%m.%Y, %H:%M") }}</a></span>
+            </li>
+            <li>
+                <span><strong>Тепловоз: </strong> {{ work.locomotive }}</a></span>
+            </li>
+            <li>
+                <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }}</span>
+            </li>
+            <li>
+                <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }}</span>
+            </li>
+            <li>
+                <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
+            </li>
+        </ul>
+        <hr/>
+    {% endfor %}
+</div>
 {% endblock %}
