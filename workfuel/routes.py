@@ -17,10 +17,11 @@ def return_profile():
     if user_id:
         if user_id:
             user = User.query.filter_by(id=user_id).first()
-            date_of_work = WorkTime.filter_by(owner=user_id).all()
+            date_of_work = WorkTime.filter_by(owner=user_id).first()
             locomotive = Locomotive.filter_by(owner=user_id).first()
-            fuel_data = Fuel.filter_by(owner=locomotive_id).all()
-            specific_weight = Fuel.filter_by()
+            beginning_fuel_liters = Fuel.filter_by(owner=locomotive_id).first()
+            end_fuel_litres = Fuel.filter_by(owner=locomotive_id).first()
+            specific_weight = Fuel.filter_by(owner=locomotive_id).first()
 
             combined_data = [
                 {
@@ -31,7 +32,7 @@ def return_profile():
                     'specific_weight': specific_weight
                 }
                 for date, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight in zip(
-                date_of_work, locomotive, fuel_data, specific_weight
+                date_of_work, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight
                 )
             ]
 
