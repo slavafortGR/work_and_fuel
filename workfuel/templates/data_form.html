@@ -1,4 +1,33 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<div>
+    <h2>Создать рабочую смену</h2>
+    <form action="/create" method="POST">
+        <div>
+            {{ data_form.hidden_tag() }}
+            <label class="form-label"><strong>Дата время:</strong></label>
+            {{ data_form.date_of_work(class="form-control", required=True, autofocus=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Тепловоз:</strong></label>
+            {{ data_form.locomotive(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Диз топливо принял:</strong></label>
+            {{ data_form.beginning_fuel_liters(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Диз топливо сдал:</strong></label>
+            {{ data_form.end_fuel_litres(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Удельный вес топлива:</strong></label>
+            {{ data_form.specific_weight(class="form-control", required=True) }}
+        </div>
+        <div class="mb-3">
+            <input type="submit" class="btn btn-primary" value="Создать">
+        </div>
+    </form>
+</div>
 {% endblock %}

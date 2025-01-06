@@ -1,4 +1,4 @@
-from workfuel import db
+from workfuel import db, app
 from datetime import datetime
 
 
@@ -52,7 +52,7 @@ class WorkersPark(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(25), nullable=False, unique=True)
     norm = db.Column(db.Float, nullable=False)
-    locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotive.id'), nullable=False)
+    locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
 
 
 class Maintenance(db.Model):
@@ -71,3 +71,7 @@ class ReserveRun(db.Model):
     start_station = db.Column(db.String(25), nullable=False)
     end_station = db.Column(db.String(25), nullable=False)
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
+
+
+with app.app_context():
+    db.create_all()

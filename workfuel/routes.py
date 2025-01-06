@@ -1,6 +1,6 @@
 from flask import render_template,redirect, request, url_for, flash, session
 from workfuel import app, db
-from workfuel.forms import LoginForm, RegistrationForm
+from workfuel.forms import LoginForm, RegistrationForm, DataForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -8,38 +8,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 @app.route('/')
 def return_main_page():
     return render_template('main_page.html')
-
-
-@app.route('/profile')
-def return_profile():
-    user_id = session.get('user_id')
-    locomotive_id = session.get('locomotive_id')
-    if user_id:
-        if user_id:
-            user = User.query.filter_by(id=user_id).first()
-            date_of_work = WorkTime.filter_by(owner=user_id).first()
-            locomotive = Locomotive.filter_by(owner=user_id).first()
-            beginning_fuel_liters = Fuel.filter_by(owner=locomotive_id).first()
-            end_fuel_litres = Fuel.filter_by(owner=locomotive_id).first()
-            specific_weight = Fuel.filter_by(owner=locomotive_id).first()
-
-            combined_data = [
-                {
-                    'date': date_of_work,
-                    'locomotive': locomotive,
-                    'beginning_fuel_liters': beginning_fuel_liters,
-                    'end_fuel_litres': end_fuel_litres,
-                    'specific_weight': specific_weight
-                }
-                for date, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight in zip(
-                date_of_work, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight
-                )
-            ]
-
-            return render_template('profile.html', user=user, combined_data=combined_data)
-        else:
-            flash('Нужно войти в систему', 'danger')
-            return redirect('login_user_get')
 
 
 @app.route('/login', methods=['GET'])
@@ -83,22 +51,16 @@ def register_user_post():
         last_name = registration_form.last_name.data
         personnel_number = registration_form.personnel_number.data
         password = registration_form.password.data
-        email = registration_form.email.data
 
         if User.query.filter_by(personnel_number=personnel_number).first() is not None:
             flash('Такой ник уже существует','danger')
-            return render_template('login_register.html', registration_form=registration_form)
-
-        if User.query.filter_by(email=email).first() is not None:
-            flash('Такой мэйл уже существует', 'danger')
             return render_template('login_register.html', registration_form=registration_form)
 
         new_user = User(
             first_name=first_name,
             last_name=last_name,
             personnel_number=personnel_number,
-            password=generate_password_hash(password),
-            email=email
+            password=generate_password_hash(password)
         )
 
         try:
@@ -111,6 +73,7 @@ def register_user_post():
             db.session.rollback()
             flash(f'Произошла ошибка: {str(e)}', 'danger')
     else:
+        print(registration_form.errors)
         flash('Неверные регистрационные данные', 'danger')
         return render_template('login_register.html', registration_form=registration_form)
 
@@ -120,4 +83,42 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('login_user_get'))
 
+@app.route('/profile', methods=['GET'])
+def return_profile():
+    user_id = session.get('user_id')
+    locomotive_id = session.get('locomotive_id')
+    if user_id:
+        user = User.query.filter_by(id=user_id).first()
+        # date_of_work = WorkTime.query.filter_by(owner=user_id).first()
+        # locomotive = Locomotive.query.filter_by(owner=user_id).first()
+        # beginning_fuel_liters = Fuel.query.filter_by(owner=locomotive_id).first()
+        # end_fuel_litres = Fuel.query.filter_by(owner=locomotive_id).first()
+        # specific_weight = Fuel.query.filter_by(owner=locomotive_id).first()
+        #
+        # combined_data = [
+        #     {
+        #         'date': date_of_work,
+        #         'locomotive': locomotive,
+        #         'beginning_fuel_liters': beginning_fuel_liters,
+        #         'end_fuel_litres': end_fuel_litres,
+        #         'specific_weight': specific_weight
+        #     }
+        #     for date, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight in zip(
+        #     date_of_work, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight
+        #     )
+        # ]
 
+        return render_template('profile.html', user=user)
+    else:
+        flash('Нужно войти в систему', 'danger')
+        return redirect('login_user_get')
+
+
+@app.route('/create', methods=(["GET"]))
+def create_work_form():
+    data_form = DataForm(request.form)
+
+    # if 'user_id' in session:
+    return render_template('data_form.html', data_form=data_form)
+    # flash("You need login", "danger")
+    # return redirect(url_for("login_user_get"))
