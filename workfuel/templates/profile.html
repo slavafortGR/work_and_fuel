@@ -19,25 +19,29 @@
     <h2 >Список смен</h2>
     <a href='/create'>Создать смену</a>
     <hr/>
-    {% for work in combined_data %}
-        <ul>
-            <li>
-                <span><strong>Дата: </strong> {{ work.date_of_work.strftime("%d.%m.%Y, %H:%M") }}</a></span>
-            </li>
-            <li>
-                <span><strong>Тепловоз: </strong> {{ work.locomotive }}</a></span>
-            </li>
-            <li>
-                <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }}</span>
-            </li>
-            <li>
-                <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }}</span>
-            </li>
-            <li>
-                <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
-            </li>
-        </ul>
-        <hr/>
-    {% endfor %}
+    {% if combined_data %}
+        {% for work in combined_data %}
+            <ul>
+                <li>
+                    <span><strong>Дата: </strong> {{ work.date }}</a></span>
+                </li>
+                <li>
+                    <span><strong>Тепловоз: </strong> {{ work.locomotive }}</a></span>
+                </li>
+                <li>
+                    <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }}</span>
+                </li>
+                <li>
+                    <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }}</span>
+                </li>
+                <li>
+                    <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
+                </li>
+            </ul>
+            <hr/>
+        {% endfor %}
+    {% else %}
+        <p>Нет данных для отображения. Добавьте данные в базу.</p>
+    {% endif %}
 </div>
 {% endblock %}

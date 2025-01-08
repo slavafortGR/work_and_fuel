@@ -1,4 +1,5 @@
 from flask import render_template,redirect, request, url_for, flash, session
+from sqlalchemy import func
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel
@@ -89,26 +90,25 @@ def return_profile():
     locomotive_id = session.get('locomotive_id')
     if user_id:
         user = User.query.filter_by(id=user_id).first()
-        # date_of_work = WorkTime.query.filter_by(owner=user_id).first()
-        # locomotive = Locomotive.query.filter_by(owner=user_id).first()
-        # beginning_fuel_liters = Fuel.query.filter_by(owner=locomotive_id).first()
-        # end_fuel_litres = Fuel.query.filter_by(owner=locomotive_id).first()
-        # specific_weight = Fuel.query.filter_by(owner=locomotive_id).first()
-        #
-        # combined_data = [
-        #     {
-        #         'date': date_of_work,
-        #         'locomotive': locomotive,
-        #         'beginning_fuel_liters': beginning_fuel_liters,
-        #         'end_fuel_litres': end_fuel_litres,
-        #         'specific_weight': specific_weight
-        #     }
-        #     for date, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight in zip(
-        #     date_of_work, locomotive, beginning_fuel_liters, end_fuel_litres, specific_weight
-        #     )
-        # ]
+        dates = WorkTime.query.with_entities(func.date(WorkTime.start_of_work)).filter_by(user_id=user_id).all()
+        locomotives = Locomotive.query.filter_by(user_id=user_id).all()
+        fuel = Fuel.query.filter_by(locomotive_id=locomotive_id).first()
 
-        return render_template('profile.html', user=user)
+        combined_data = []
+        if dates and locomotives and fuel:
+            beginning_fuel_liters = fuel.beginning_fuel_liters
+            end_fuel_litres = fuel.end_fuel_litres
+            specific_weight = fuel.specific_weight
+
+            for date, loco, begin_fuel, end_fuel, weight in zip(dates, locomotives, beginning_fuel_liters, end_fuel_litres, specific_weight):
+                combined_data.append({
+                    'date': date,
+                    'locomotive': loco,
+                    'beginning_fuel_liters': begin_fuel,
+                    'end_fuel_litres': end_fuel,
+                    'specific_weight': weight
+                })
+        return render_template('profile.html', user=user, combined_data=combined_data)
     else:
         flash('Нужно войти в систему', 'danger')
         return redirect('login_user_get')

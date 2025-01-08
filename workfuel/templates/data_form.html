@@ -6,11 +6,11 @@
     <form action="/create" method="POST">
         <div>
             {{ data_form.hidden_tag() }}
-            <label class="form-label"><strong>Дата время:</strong></label>
+            <label class="form-label"><strong>Дата:</strong></label>
             {{ data_form.date_of_work(class="form-control", required=True, autofocus=True) }}
         </div>
         <div>
-            <label class="form-label"><strong>Тепловоз:</strong></label>
+            <label class="form-label"><strong>Тепловоз: ЧМЭ3 -</strong></label>
             {{ data_form.locomotive(class="form-control", required=True) }}
         </div>
         <div>
