@@ -15,7 +15,7 @@ class Locomotive(db.Model):
     __tablename__ = 'locomotives'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     locomotive_number = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    driver = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
 class Fuel(db.Model):
@@ -33,9 +33,10 @@ class Fuel(db.Model):
 class WorkTime(db.Model):
     __tablename__ = 'worktime'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    date = db.Column(db.String(8), nullable=False)
     route_number = db.Column(db.Integer, nullable=False)
-    start_of_work = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    end_of_work = db.Column(db.DateTime, nullable=False)
+    start_of_work = db.Column(db.String(5), nullable=False)
+    end_of_work = db.Column(db.String(5), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 

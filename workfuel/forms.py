@@ -17,8 +17,11 @@ class RegistrationForm(FlaskForm):
 
 
 class DataForm(FlaskForm):
-    date_of_work = DateTimeField('Date time', validators=[DataRequired()])
-    locomotive = StringField('Locomotive', validators=[DataRequired()])
+    date = StringField('Date', validators=[DataRequired()])
+    route_number = IntegerField('Route number', validators=[DataRequired()])
+    start_of_work = FloatField('Start work', validators=[DataRequired()])
+    end_of_work = FloatField('End work', validators=[DataRequired()])
+    locomotive_number = StringField('Locomotive', validators=[DataRequired()])
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()])
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()])
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()])

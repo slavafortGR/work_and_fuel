@@ -5,13 +5,25 @@
     <h2>Создать рабочую смену</h2>
     <form action="/create" method="POST">
         <div>
-            {{ data_form.hidden_tag() }}
+            {{ data_form.csrf_token() }}
             <label class="form-label"><strong>Дата:</strong></label>
-            {{ data_form.date_of_work(class="form-control", required=True, autofocus=True) }}
+            {{ data_form.date(class="form-control", required=True, autofocus=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Номер маршрута: </strong></label>
+            {{ data_form.route_number(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Начало смены:</strong></label>
+            {{ data_form.start_of_work(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Окончание смены:</strong></label>
+            {{ data_form.end_of_work(class="form-control", required=True) }}
         </div>
         <div>
             <label class="form-label"><strong>Тепловоз: ЧМЭ3 -</strong></label>
-            {{ data_form.locomotive(class="form-control", required=True) }}
+            {{ data_form.locomotive_number(class="form-control", required=True) }}
         </div>
         <div>
             <label class="form-label"><strong>Диз топливо принял:</strong></label>
@@ -25,9 +37,7 @@
             <label class="form-label"><strong>Удельный вес топлива:</strong></label>
             {{ data_form.specific_weight(class="form-control", required=True) }}
         </div>
-        <div class="mb-3">
-            <input type="submit" class="btn btn-primary" value="Создать">
-        </div>
+        <input type="submit" class="btn btn-primary" value="Создать">
     </form>
 </div>
 {% endblock %}
