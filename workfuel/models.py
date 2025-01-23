@@ -16,6 +16,7 @@ class Locomotive(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     locomotive_number = db.Column(db.Integer, nullable=False)
     driver = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    fuels = db.relationship('Fuel', backref='locomotive', lazy=True)
 
 
 class Fuel(db.Model):

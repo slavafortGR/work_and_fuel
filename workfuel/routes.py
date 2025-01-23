@@ -1,10 +1,8 @@
 from flask import render_template, redirect, request, url_for, flash, session
-from sqlalchemy import func
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime, timedelta
 
 
 @app.route('/')
@@ -89,32 +87,46 @@ def logout():
 @app.route('/profile', methods=['GET'])
 def return_profile():
     user_id = session.get('user_id')
-    locomotive_id = session.get('locomotive_id')
     if user_id:
         user = User.query.filter_by(id=user_id).first()
-        dates = WorkTime.query.with_entities(func.date(WorkTime.start_of_work)).filter_by(user_id=user_id).all()
+        work_times = WorkTime.query.filter_by(user_id=user_id).all()
         locomotives = Locomotive.query.filter_by(driver=user_id).all()
-        fuel = Fuel.query.filter_by(locomotive_id=locomotive_id).first()
 
+        # Собираем все объекты Fuel, связанные с локомотивами пользователя
+        fuels = []
+        for locomotive in locomotives:
+            fuels.extend(Fuel.query.filter_by(locomotive_id=locomotive.id).all())
+
+        # Объединяем данные
         combined_data = []
-        if dates and locomotives and fuel:
-            beginning_fuel_liters = fuel.beginning_fuel_liters
-            end_fuel_litres = fuel.end_fuel_litres
-            specific_weight = fuel.specific_weight
-
-            for date, loco, begin_fuel, end_fuel, weight in zip(dates, locomotives, beginning_fuel_liters,
-                                                                end_fuel_litres, specific_weight):
+        for work_time, locomotive in zip(work_times, locomotives):
+            # Находим связанный объект Fuel для текущего локомотива
+            related_fuels = [fuel for fuel in fuels if fuel.locomotive_id == locomotive.id]
+            if related_fuels:
+                fuel = related_fuels[0]  # Берём первый найденный объект Fuel
                 combined_data.append({
-                    'date': date,
-                    'locomotive': loco,
-                    'beginning_fuel_liters': begin_fuel,
-                    'end_fuel_litres': end_fuel,
-                    'specific_weight': weight
+                    'date': work_time.date,
+                    'locomotive_number': locomotive.locomotive_number,
+                    'beginning_fuel_liters': fuel.beginning_fuel_liters,
+                    'end_fuel_litres': fuel.end_fuel_litres,
+                    'specific_weight': fuel.specific_weight
                 })
+            else:
+                # Если топливо для локомотива не найдено, добавляем только базовые данные
+                combined_data.append({
+                    'date': work_time.date,
+                    'locomotive_number': locomotive.locomotive_number,
+                    'beginning_fuel_liters': None,
+                    'end_fuel_litres': None,
+                    'specific_weight': None
+                })
+
         return render_template('profile.html', user=user, combined_data=combined_data)
     else:
         flash('Нужно войти в систему', 'danger')
         return redirect('login_user_get')
+
+
 
 
 @app.route('/create', methods=["GET"])

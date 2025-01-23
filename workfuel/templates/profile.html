@@ -17,22 +17,21 @@
 
 <div>
     <h2 >Список смен</h2>
-    <a href='/create'>Создать смену</a>
     <hr/>
     {% if combined_data %}
         {% for work in combined_data %}
             <ul>
                 <li>
-                    <span><strong>Дата: </strong> {{ work.date }}</a></span>
+                    <span><strong>Дата: </strong> {{ work.date }}</span>
                 </li>
                 <li>
-                    <span><strong>Тепловоз: </strong> {{ work.locomotive }}</a></span>
+                    <span><strong> Тепловоз: {% if work.locomotive_number <= 6000 %} ЧМЭ3 {% else %} ЧМЭ3т {% endif %}</strong> - {{ work.locomotive_number }}</span>
                 </li>
                 <li>
-                    <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }}</span>
+                    <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }} л</span>
                 </li>
                 <li>
-                    <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }}</span>
+                    <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }} л</span>
                 </li>
                 <li>
                     <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
@@ -40,6 +39,7 @@
             </ul>
             <hr/>
         {% endfor %}
+    <a href='/create'>Создать смену</a>
     {% else %}
         <p>Нет данных для отображения. Добавьте данные в базу.</p>
     {% endif %}
