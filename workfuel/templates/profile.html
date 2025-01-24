@@ -38,7 +38,7 @@
                     <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
                 </li>
                 <li>
-                    <span><strong>Норма/ факт:</strong> {{ work.norm }}/ {{ work.fact }} кг</span>
+                    <span><strong>Норма/ факт:</strong> {{ work.norm }}/ {{ work.fact|round(0) }} кг</span>
                 </li>
             </ul>
             <hr/>

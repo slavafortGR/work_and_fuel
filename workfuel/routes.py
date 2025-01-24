@@ -154,8 +154,6 @@ def create_work_form_post():
     end_fuel_litres = request.form.get('end_fuel_litres')
     specific_weight = request.form.get('specific_weight')
     norm = request.form.get('norm')
-    fact = request.form.get('fact')
-    print(norm, fact)
 
     if data_form.validate_on_submit():
         try:
@@ -183,7 +181,7 @@ def create_work_form_post():
                 end_fuel_kilo=int(end_fuel_litres) * float(specific_weight),
                 specific_weight=specific_weight,
                 norm=float(norm),
-                fact=float(fact),
+                fact=int(beginning_fuel_liters) * float(specific_weight) - int(end_fuel_litres) * float(specific_weight),
                 locomotive_id=new_locomotive.id
             )
             db.session.add(new_fuel)
