@@ -28,6 +28,8 @@ class Fuel(db.Model):
     end_fuel_kilo = db.Column(db.Float, nullable=False)
     specific_weight = db.Column(db.Float, nullable=False)
     add_fuel = db.Column(db.Integer, nullable=True)
+    norm = db.Column(db.Float, nullable=False)
+    fact = db.Column(db.Float, nullable=False)
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
 
 

@@ -25,3 +25,5 @@ class DataForm(FlaskForm):
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()])
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()])
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()])
+    norm = FloatField('norm', validators=[DataRequired()])
+    fact = FloatField('fact', validators=[DataRequired()])

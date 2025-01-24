@@ -33,7 +33,7 @@ def login_user_post():
             return redirect(url_for('return_profile'))
 
     flash('Некорректный ввод данных. Проверьте и введите заново', 'danger')
-    return redirect(url_for("login_user_get"))
+    return redirect(url_for('login_user_get'))
 
 
 @app.route('/register', methods=['GET'])
@@ -73,7 +73,6 @@ def register_user_post():
             db.session.rollback()
             flash(f'Произошла ошибка: {str(e)}', 'danger')
     else:
-        print(registration_form.errors)
         flash('Неверные регистрационные данные', 'danger')
         return render_template('login_register.html', registration_form=registration_form)
 
@@ -92,36 +91,39 @@ def return_profile():
         work_times = WorkTime.query.filter_by(user_id=user_id).all()
         locomotives = Locomotive.query.filter_by(driver=user_id).all()
 
-        # Собираем все объекты Fuel, связанные с локомотивами пользователя
         fuels = []
         for locomotive in locomotives:
             fuels.extend(Fuel.query.filter_by(locomotive_id=locomotive.id).all())
 
-        # Объединяем данные
         combined_data = []
         for work_time, locomotive in zip(work_times, locomotives):
-            # Находим связанный объект Fuel для текущего локомотива
             related_fuels = [fuel for fuel in fuels if fuel.locomotive_id == locomotive.id]
             if related_fuels:
-                fuel = related_fuels[0]  # Берём первый найденный объект Fuel
+                fuel = related_fuels[0]
                 combined_data.append({
                     'date': work_time.date,
                     'locomotive_number': locomotive.locomotive_number,
                     'beginning_fuel_liters': fuel.beginning_fuel_liters,
+                    'beginning_fuel_kilo': fuel.beginning_fuel_kilo,
                     'end_fuel_litres': fuel.end_fuel_litres,
-                    'specific_weight': fuel.specific_weight
+                    'end_fuel_kilo': fuel.end_fuel_kilo,
+                    'specific_weight': fuel.specific_weight,
+                    'norm': fuel.norm,
+                    'fact': fuel.fact
                 })
             else:
-                # Если топливо для локомотива не найдено, добавляем только базовые данные
                 combined_data.append({
                     'date': work_time.date,
                     'locomotive_number': locomotive.locomotive_number,
                     'beginning_fuel_liters': None,
                     'end_fuel_litres': None,
-                    'specific_weight': None
+                    'specific_weight': None,
+                    'norm': None,
+                    'fact': None
                 })
 
         return render_template('profile.html', user=user, combined_data=combined_data)
+
     else:
         flash('Нужно войти в систему', 'danger')
         return redirect('login_user_get')
@@ -129,28 +131,31 @@ def return_profile():
 
 
 
-@app.route('/create', methods=["GET"])
+@app.route('/create', methods=['GET'])
 def create_work_form_get():
     data_form = DataForm(request.form)
 
     if 'user_id' in session:
         return render_template('data_form.html', data_form=data_form)
-    flash("You need login", "danger")
-    return redirect(url_for("login_user_get"))
+    flash('You need login', 'danger')
+    return redirect(url_for('login_user_get'))
 
 
-@app.route('/create', methods=["POST"])
+@app.route('/create', methods=['POST'])
 def create_work_form_post():
     data_form = DataForm(request.form)
 
-    date = request.form.get("date")
-    route_number = request.form.get("route_number")
-    start_of_work = request.form.get("start_of_work")
-    end_of_work = request.form.get("end_of_work")
-    locomotive_number = request.form.get("locomotive_number")
-    beginning_fuel_liters = request.form.get("beginning_fuel_liters")
-    end_fuel_litres = request.form.get("end_fuel_litres")
-    specific_weight = request.form.get("specific_weight")
+    date = request.form.get('date')
+    route_number = request.form.get('route_number')
+    start_of_work = request.form.get('start_of_work')
+    end_of_work = request.form.get('end_of_work')
+    locomotive_number = request.form.get('locomotive_number')
+    beginning_fuel_liters = request.form.get('beginning_fuel_liters')
+    end_fuel_litres = request.form.get('end_fuel_litres')
+    specific_weight = request.form.get('specific_weight')
+    norm = request.form.get('norm')
+    fact = request.form.get('fact')
+    print(norm, fact)
 
     if data_form.validate_on_submit():
         try:
@@ -177,19 +182,21 @@ def create_work_form_post():
                 end_fuel_litres=end_fuel_litres,
                 end_fuel_kilo=int(end_fuel_litres) * float(specific_weight),
                 specific_weight=specific_weight,
+                norm=float(norm),
+                fact=float(fact),
                 locomotive_id=new_locomotive.id
             )
             db.session.add(new_fuel)
             db.session.commit()
 
-            flash("Смена успешно создана", "success")
+            flash('Смена успешно создана', 'success')
             print('Смена успешно создана')
-            return redirect(url_for("return_profile"))
+            return redirect(url_for('return_profile'))
         except Exception as e:
             db.session.rollback()
             print('Mistake', {str(e)})
 
-            flash(f"An error occurred: {str(e)}", "danger")
+            flash(f'An error occurred: {str(e)}', 'danger')
         return render_template('data_form.html', data_form=data_form)
     else:
-        return render_template("data_form.html", data_form=data_form)
+        return render_template('data_form.html', data_form=data_form)
