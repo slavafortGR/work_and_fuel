@@ -1,7 +1,51 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
+{% if login_tab %}
+    <div>
+        <h2>Вход в систему</h2>
+        <form action="/login" method="POST">
+            <div>
+                {{ login_form.hidden_tag() }}
+                <label class="form-label"><strong>Табельный номер:</strong></label>
+                {{ login_form.personnel_number(class="form-control", required=True, autofocus=True) }}
+            </div>
+            <div>
+                <label class="form-label"><strong>Пароль:</strong></label>
+                {{ login_form.password(class="form-control", required=True) }}
+            </div>
+            <input type="submit" class="btn btn-primary btn-sm" value="Войти в систему">
+        </form>
+    </div>
+{% endif %}
 
+{% if register_tab %}
+<div>
+    <h2>Регистрация</h2>
+    <form action="/register" method="POST">
+        <div>
+            {{ registration_form.csrf_token }}
+            <label class="form-label"><strong>Имя:</strong></label>
+            {{ registration_form.first_name(class="form-control", required=True, autofocus=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Фамилия:</strong></label>
+            {{ registration_form.last_name(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Табельный номер:</strong></label>
+            {{ registration_form.personnel_number(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Пароль:</strong></label>
+            {{ registration_form.password(class="form-control", required=True) }}
+        </div>
+        <div>
+            <label class="form-label"><strong>Подтвердить пароль:</strong></label>
+            {{ registration_form.confirm_password(class="form-control", required=True) }}
+        </div>
+        <input type="submit" class="btn btn-primary btn-sm" value="Зарегистрироваться">
+    </form>
 </div>
+{% endif %}
 {% endblock %}

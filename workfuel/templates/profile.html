@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div>
+    <ul>
+        <li>
+            <span><strong>Имя:</strong> {{ user.first_name }}</span>
+        </li>
+        <li>
+            <span><strong>Фамилия:</strong> {{ user.last_name }}</span>
+        </li>
+        <li>
+            <span><strong>Табельный номер:</strong> {{ user.personnel_number }}</span>
+        </li>
+    </ul>
+</div>
+
+<div>
+    <h2 >Список смен</h2>
+    <a href='/create'>Создать смену</a>
+    <hr/>
+    {% if combined_data %}
+        {% for work in combined_data %}
+            <ul>
+                <li>
+                    <span><strong>Дата: </strong> {{ work.date }}</span>
+                </li>
+                <li>
+                    <span><strong> Тепловоз: {% if work.locomotive_number <= 6000 %} ЧМЭ3 {% else %} ЧМЭ3т {% endif %}</strong> - {{ work.locomotive_number }}</span>
+                </li>
+                <li>
+                    <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }} л/ {{ work.beginning_fuel_kilo|round(0) }} кг</span>
+                </li>
+                <li>
+                    <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }} л/ {{ work.end_fuel_kilo|round(0) }} кг</span>
+                </li>
+                <li>
+                    <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
+                </li>
+                <li>
+                    <span><strong>Норма/ факт:</strong> {{ work.norm }}/ {{ work.fact|round(0) }} кг</span>
+                </li>
+            </ul>
+            <hr/>
+        {% endfor %}
+    <a href='/logout'>Выйти из системы</a>
+    {% else %}
+        <p>Нет данных для отображения. Добавьте данные в базу.</p>
+    {% endif %}
+</div>
+{% endblock %}

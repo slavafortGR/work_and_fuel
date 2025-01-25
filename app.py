@@ -1,5 +1,5 @@
-from workfuel import app, routes
+from workfuel import app, routes, models, forms
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
