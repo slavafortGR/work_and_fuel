@@ -121,14 +121,10 @@ def return_profile():
                     'norm': None,
                     'fact': None
                 })
-
         return render_template('profile.html', user=user, combined_data=combined_data)
-
     else:
         flash('Нужно войти в систему', 'danger')
         return redirect('login_user_get')
-
-
 
 
 @app.route('/create', methods=['GET'])
