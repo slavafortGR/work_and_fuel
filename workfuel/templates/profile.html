@@ -17,7 +17,7 @@
 
 <div>
     <h2 >Список смен</h2>
-    <a href='/create'>Создать смену</a>
+    <a href='/create' class="btn btn-success btn-sm ms-3">Создать смену</a>
     <hr/>
     {% if combined_data %}
         {% for work in combined_data %}
@@ -43,7 +43,7 @@
             </ul>
             <hr/>
         {% endfor %}
-    <a href='/logout'>Выйти из системы</a>
+    <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% else %}
         <p>Нет данных для отображения. Добавьте данные в базу.</p>
     {% endif %}
