@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateTimeField, IntegerField, FloatField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField
 from wtforms.validators import DataRequired, Optional, EqualTo
 
 class LoginForm(FlaskForm):
@@ -17,12 +17,13 @@ class RegistrationForm(FlaskForm):
 
 
 class DataForm(FlaskForm):
-    date = StringField('Date', validators=[DataRequired()])
+    date = DateTimeField('Date', validators=[DataRequired()], format='%d.%m.%y')
     route_number = IntegerField('Route number', validators=[DataRequired()])
-    start_of_work = FloatField('Start work', validators=[DataRequired()])
-    end_of_work = FloatField('End work', validators=[DataRequired()])
+    start_of_work = DateTimeField('Start work', validators=[DataRequired()], format='%H:%M')
+    end_of_work = DateTimeField('End work', validators=[DataRequired()], format='%H:%M')
     locomotive_number = StringField('Locomotive', validators=[DataRequired()])
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()])
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()])
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()])
     norm = FloatField('norm', validators=[DataRequired()])
+    submit = SubmitField('Create')

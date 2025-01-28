@@ -3,6 +3,7 @@ from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 
 @app.route('/')
@@ -141,18 +142,27 @@ def create_work_form_get():
 def create_work_form_post():
     data_form = DataForm(request.form)
 
-    date = request.form.get('date')
+    date_str = request.form.get('date')
+    date = datetime.strptime(date_str, '%d.%m.%Y').date()
     route_number = request.form.get('route_number')
-    start_of_work = request.form.get('start_of_work')
-    end_of_work = request.form.get('end_of_work')
+    start_of_work_str = request.form.get('start_of_work')
+    start_of_work = datetime.strptime(start_of_work_str, '%H:%M').time()
+    end_of_work_str = request.form.get('end_of_work')
+    end_of_work = datetime.strptime(end_of_work_str, '%H:%M').time()
     locomotive_number = request.form.get('locomotive_number')
     beginning_fuel_liters = request.form.get('beginning_fuel_liters')
     end_fuel_litres = request.form.get('end_fuel_litres')
     specific_weight = request.form.get('specific_weight')
     norm = request.form.get('norm')
+    print(date, route_number, start_of_work, end_of_work, beginning_fuel_liters, end_fuel_litres, specific_weight, norm)
+    print(type(date))
+    print(type(start_of_work))
 
     if data_form.validate_on_submit():
         try:
+            # date = datetime.strptime(date, '%d.%m.%y').date()
+            # start_of_work = datetime.strptime(start_of_work, '%H.%M').time()
+            # end_of_work = datetime.strptime(end_of_work, '%H.%M').time()
             new_work_time = WorkTime(
                 date=date,
                 route_number=route_number,
@@ -188,9 +198,12 @@ def create_work_form_post():
             return redirect(url_for('return_profile'))
         except Exception as e:
             db.session.rollback()
-            print('Mistake', {str(e)})
 
             flash(f'An error occurred: {str(e)}', 'danger')
         return render_template('data_form.html', data_form=data_form)
     else:
+        print('Mistake')
+        print(type(date))
+        print(type(start_of_work))
+
         return render_template('data_form.html', data_form=data_form)
