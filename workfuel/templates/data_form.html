@@ -1,47 +1,60 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
+<div class="content-wrapper">
     <h2>Создать рабочую смену</h2>
+
+    {% if data_form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field, errors in data_form.errors.items() %}
+                    {% for error in errors %}
+                        <li><strong>{{ field }}</strong>: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     <form action="/create" method="POST">
-        <div>
+        <div class="mb-3 wid_row">
             {{ data_form.csrf_token() }}
             <label class="form-label"><strong>Дата:</strong></label>
-            {{ data_form.date(class="form-control", required=True, autofocus=True) }}
+            {{ data_form.date(class="form-control", required=True, type="data", autofocus=True) }}
         </div>
-        <div>
+        <div class="mb-3 wid_row">
             <label class="form-label"><strong>Номер маршрута: </strong></label>
             {{ data_form.route_number(class="form-control", required=True) }}
         </div>
-        <div>
+        <div class="mb-3 wid_row">
             <label class="form-label"><strong>Начало смены:</strong></label>
             {{ data_form.start_of_work(class="form-control", required=True) }}
         </div>
-        <div>
+        <div class="mb-3 wid_row">
             <label class="form-label"><strong>Окончание смены:</strong></label>
             {{ data_form.end_of_work(class="form-control", required=True) }}
         </div>
-        <div>
+        <div class="mb-3 wid_row">
             <label class="form-label"><strong>Тепловоз: ЧМЭ3 -</strong></label>
             {{ data_form.locomotive_number(class="form-control", required=True) }}
         </div>
-        <div>
-            <label class="form-label"><strong>Диз топливо принял:</strong></label>
+        <div class="mb-3 wid_row">
+            <label class="form-label"><strong>Дизельное топливо принял:</strong></label>
             {{ data_form.beginning_fuel_liters(class="form-control", required=True) }}
         </div>
-        <div>
-            <label class="form-label"><strong>Диз топливо сдал:</strong></label>
+        <div class="mb-3 wid_row">
+            <label class="form-label"><strong>Дизельное топливо сдал:</strong></label>
             {{ data_form.end_fuel_litres(class="form-control", required=True) }}
         </div>
-        <div>
+        <div class="mb-3 wid_row">
             <label class="form-label"><strong>Удельный вес топлива:</strong></label>
             {{ data_form.specific_weight(class="form-control", required=True) }}
         </div>
-        <div>
+        <div class="mb-3 wid_row">
             <label class="form-label"><strong>Норма:</strong></label>
             {{ data_form.norm(class="form-control", required=True) }}
         </div>
-        <input type="submit" class="btn btn-primary" value="Создать">
+        <input type="submit" class="btn btn-success" value="Создать">
     </form>
 </div>
 {% endblock %}

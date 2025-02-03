@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
-    <p>Добро пожаловать в приложение для статистики рабочего времени и учёта дизельного топлива</p>
+<div class="border border-success-subtle rounded p-2 ms-3 shadow-sm">
+    <p class="fw-bold text-success">Добро пожаловать в приложение для статистики рабочего времени и учёта дизельного топлива</p>
 </div>
-<div>
-    <a href="/login">Войти в систему</a>
+<div class="mb-3">
+    <a href="/login" class="btn btn-success btn-sm ms-3">Войти в систему</a>
 </div>
-<div>
-    <a href="/register">Зарегистрироваться</a>
+<div class="mb-3">
+    <a href="/register" class="btn btn-secondary btn-sm ms-3">Зарегистрироваться</a>
 </div>
 {% endblock %}

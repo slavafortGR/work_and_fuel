@@ -3,6 +3,7 @@ from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 
 @app.route('/')
@@ -103,6 +104,8 @@ def return_profile():
                 combined_data.append({
                     'date': work_time.date,
                     'locomotive_number': locomotive.locomotive_number,
+                    'start_of_work': work_time.start_of_work.strftime('%H:%M'),
+                    'end_of_work': work_time.end_of_work.strftime('%H:%M'),
                     'beginning_fuel_liters': fuel.beginning_fuel_liters,
                     'beginning_fuel_kilo': fuel.beginning_fuel_kilo,
                     'end_fuel_litres': fuel.end_fuel_litres,
@@ -141,10 +144,16 @@ def create_work_form_get():
 def create_work_form_post():
     data_form = DataForm(request.form)
 
-    date = request.form.get('date')
+    date_str = request.form.get('date')
+    date = datetime.strptime(date_str, '%Y.%m.%d').date()
     route_number = request.form.get('route_number')
-    start_of_work = request.form.get('start_of_work')
-    end_of_work = request.form.get('end_of_work')
+    start_of_work_str = request.form.get('start_of_work')
+    start_of_work = datetime.strptime(start_of_work_str, '%H:%M').time()
+    end_of_work_str = request.form.get('end_of_work')
+    end_of_work = datetime.strptime(end_of_work_str, '%H:%M').time()
+
+    start_of_work = datetime.combine(date, start_of_work)
+    end_of_work = datetime.combine(date, end_of_work)
     locomotive_number = request.form.get('locomotive_number')
     beginning_fuel_liters = request.form.get('beginning_fuel_liters')
     end_fuel_litres = request.form.get('end_fuel_litres')
@@ -153,6 +162,7 @@ def create_work_form_post():
 
     if data_form.validate_on_submit():
         try:
+
             new_work_time = WorkTime(
                 date=date,
                 route_number=route_number,
@@ -188,9 +198,8 @@ def create_work_form_post():
             return redirect(url_for('return_profile'))
         except Exception as e:
             db.session.rollback()
-            print('Mistake', {str(e)})
-
             flash(f'An error occurred: {str(e)}', 'danger')
+
         return render_template('data_form.html', data_form=data_form)
     else:
         return render_template('data_form.html', data_form=data_form)

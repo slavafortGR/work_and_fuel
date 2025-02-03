@@ -17,13 +17,19 @@
 
 <div>
     <h2 >Список смен</h2>
-    <a href='/create'>Создать смену</a>
+    <a href='/create' class="btn btn-success btn-sm ms-3">Создать смену</a>
     <hr/>
     {% if combined_data %}
         {% for work in combined_data %}
             <ul>
                 <li>
-                    <span><strong>Дата: </strong> {{ work.date }}</span>
+                    <span><strong>Дата: </strong> {{ work.date.strftime('%d.%m.%Y') }}</span>
+                </li>
+                <li>
+                    <span><strong>Начало смены: </strong> {{ work['start_of_work'] }}</span>
+                </li>
+                <li>
+                    <span><strong>Окончание смены: </strong> {{ work['end_of_work'] }}</span>
                 </li>
                 <li>
                     <span><strong> Тепловоз: {% if work.locomotive_number <= 6000 %} ЧМЭ3 {% else %} ЧМЭ3т {% endif %}</strong> - {{ work.locomotive_number }}</span>
@@ -43,7 +49,7 @@
             </ul>
             <hr/>
         {% endfor %}
-    <a href='/logout'>Выйти из системы</a>
+    <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% else %}
         <p>Нет данных для отображения. Добавьте данные в базу.</p>
     {% endif %}
