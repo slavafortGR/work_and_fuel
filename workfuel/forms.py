@@ -17,7 +17,7 @@ class RegistrationForm(FlaskForm):
 
 
 class DataForm(FlaskForm):
-    date = DateTimeField('Date', validators=[DataRequired()], format='%d.%m.%y')
+    date = DateTimeField('Date', validators=[DataRequired()], format='%Y.%m.%d')
     route_number = IntegerField('Route number', validators=[DataRequired()])
     start_of_work = DateTimeField('Start work', validators=[DataRequired()], format='%H:%M')
     end_of_work = DateTimeField('End work', validators=[DataRequired()], format='%H:%M')

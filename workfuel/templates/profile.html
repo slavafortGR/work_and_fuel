@@ -23,7 +23,13 @@
         {% for work in combined_data %}
             <ul>
                 <li>
-                    <span><strong>Дата: </strong> {{ work.date }}</span>
+                    <span><strong>Дата: </strong> {{ work.date.strftime('%d.%m.%Y') }}</span>
+                </li>
+                <li>
+                    <span><strong>Начало смены: </strong> {{ work['start_of_work'] }}</span>
+                </li>
+                <li>
+                    <span><strong>Окончание смены: </strong> {{ work['end_of_work'] }}</span>
                 </li>
                 <li>
                     <span><strong> Тепловоз: {% if work.locomotive_number <= 6000 %} ЧМЭ3 {% else %} ЧМЭ3т {% endif %}</strong> - {{ work.locomotive_number }}</span>
