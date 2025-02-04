@@ -27,3 +27,16 @@ class DataForm(FlaskForm):
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()])
     norm = FloatField('norm', validators=[DataRequired()])
     submit = SubmitField('Create')
+
+
+class SettingsForm(FlaskForm):
+    park_l_norm = IntegerField('Норма парк Л', validators=[DataRequired()])
+    park_g_norm = IntegerField('Норма парк Г', validators=[DataRequired()])
+    park_e_norm = IntegerField('Норма парк Е', validators=[DataRequired()])
+    park_z_norm = IntegerField('Норма парк З', validators=[DataRequired()])
+    park_vm_norm = IntegerField('Норма парк "Втормет"', validators=[DataRequired()])
+    park_nijny_norm = IntegerField('Норма парк "Нижний"', validators=[DataRequired()])
+    park_vchd_3_norm = IntegerField('Норма парк ВЧД-3', validators=[DataRequired()])
+    park_tch_1_norm = IntegerField('Норма парк ТЧ-1', validators=[DataRequired()])
+    hot_state = IntegerField('Горячий простой', validators=[DataRequired()])
+    cool_state = IntegerField('Холодный простой', validators=[DataRequired()])

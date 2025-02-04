@@ -76,5 +76,31 @@ class ReserveRun(db.Model):
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
 
 
+class Settings(db.Model):
+
+    __tablename__ = "settings"
+    id = db.Column(db.Integer, primary_key=True)
+    park_l_norm = db.Column(db.Integer, nullable=False, default=14)
+    park_g_norm = db.Column(db.Integer, nullable=False, default=15)
+    park_e_norm = db.Column(db.Integer, nullable=False, default=15)
+    park_z_norm = db.Column(db.Integer, nullable=False, default=15)
+    park_vm_norm = db.Column(db.Integer, nullable=False, default=15)
+    park_nijny_norm = db.Column(db.Integer, nullable=False, default=13)
+    park_vchd_3_norm = db.Column(db.Integer, nullable=False, default=13)
+    park_tch_1_norm = db.Column(db.Integer, nullable=False, default=10)
+    hot_state = db.Column(db.Integer, nullable=False, default=10)
+    cool_state = db.Column(db.Integer, nullable=False, default=0)
+
+    @classmethod
+    def get_instance(cls):
+        instance = cls.query.get(1)
+        if instance is None:
+            instance = cls(id=1)
+            db.session.add(instance)
+            db.session.commit()
+        return instance
+
+
 with app.app_context():
     db.create_all()
+    settings_params = Settings.get_instance()

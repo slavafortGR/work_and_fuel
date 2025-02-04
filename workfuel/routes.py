@@ -1,7 +1,8 @@
 from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
-from workfuel.forms import LoginForm, RegistrationForm, DataForm
-from workfuel.models import User, WorkTime, Locomotive, Fuel
+from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
+from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
+from workfuel.helpers import validate_settings_form
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
@@ -203,3 +204,54 @@ def create_work_form_post():
         return render_template('data_form.html', data_form=data_form)
     else:
         return render_template('data_form.html', data_form=data_form)
+
+
+@app.route('/settings', methods=['GET'])
+def get_settings():
+    settings_params = Settings.query.first() or Settings()
+
+    settings_dict = {
+        "park_l_norm": settings_params.park_l_norm,
+        "park_g_norm": settings_params.park_g_norm,
+        "park_e_norm": settings_params.park_e_norm,
+        "park_z_norm": settings_params.park_z_norm,
+        "park_vm_norm": settings_params.park_vm_norm,
+        "park_nijny_norm": settings_params.park_nijny_norm,
+        "park_vchd_3_norm": settings_params.park_vchd_3_norm,
+        "park_tch_1_norm": settings_params.park_tch_1_norm,
+        "hot_state": settings_params.hot_state,
+        "cool_state": settings_params.cool_state
+    }
+
+    return render_template('settings.html', settings_params=SettingsForm(request.form), settings_dict=settings_dict)
+
+
+@app.route('/settings', methods=['POST'])
+def post_settings():
+    settings_form = SettingsForm(request.form)
+
+    try:
+        form_data = request.form.to_dict()
+
+        settings_params = Settings.query.first() or Settings()
+
+        for field, value in form_data.items():
+            if hasattr(settings_params, field):
+                setattr(settings_params, field, int(value))
+
+        if not validate_settings_form(settings_params.park_l_norm, settings_params.park_g_norm, settings_params.park_e_norm,
+            settings_params.park_z_norm, settings_params.park_vm_norm, settings_params.park_nijny_norm,
+            settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm, settings_params.hot_state,
+            settings_params.cool_state
+        ):
+            flash("Some settings are invalid.", "danger")
+            return render_template("settings.html", settings_form=settings_form)
+
+        db.session.add(settings_params)
+        db.session.commit()
+        flash("Settings successfully update", "success")
+        return redirect(url_for("return_profile"))
+
+    except Exception as e:
+        flash("An error occurred: " + repr(e), "danger")
+        return render_template("settings.html", settings_form=settings_form)
