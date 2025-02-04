@@ -56,7 +56,7 @@ def register_user_post():
 
         if User.query.filter_by(personnel_number=personnel_number).first() is not None:
             flash('Такой табельный номер уже существует', 'danger')
-            return render_template('login_register.html', registration_form=registration_form)
+            return render_template('login_register.html', register_tab=True, registration_form=registration_form)
 
         new_user = User(
             first_name=first_name,
@@ -76,7 +76,7 @@ def register_user_post():
             flash(f'Произошла ошибка: {str(e)}', 'danger')
     else:
         flash('Неверные регистрационные данные', 'danger')
-        return render_template('login_register.html', registration_form=registration_form)
+        return render_template('login_register.html', register_tab=True, registration_form=registration_form)
 
 
 @app.route('/logout')

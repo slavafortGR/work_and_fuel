@@ -12,7 +12,18 @@
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
-<body class="p-3 mb-2 bg-success-subtle text-emphasis-success">
+<body class="p-3 mb-2 bg-warning text-emphasis-success">
+<div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flash">
+            {% for category, message in messages %}
+            <li class="alert alert-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+</div>
 <div>
     {% block content %}
     {% endblock %}

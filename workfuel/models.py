@@ -4,10 +4,10 @@ from workfuel import db, app
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    first_name = db.Column(db.String(25), nullable=False)
-    last_name = db.Column(db.String(25), nullable=False)
+    first_name = db.Column(db.String(25), nullable=True)
+    last_name = db.Column(db.String(25), nullable=True)
     personnel_number = db.Column(db.Integer, nullable=False, unique=True)
-    password = db.Column(db.String(1024), nullable=False)
+    password = db.Column(db.String(1024), nullable=False, default=3)
 
 
 class Locomotive(db.Model):

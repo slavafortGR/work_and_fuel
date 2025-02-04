@@ -17,40 +17,40 @@
     {% endif %}
 
     <form action="/create" method="POST">
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             {{ data_form.csrf_token() }}
             <label class="form-label"><strong>Дата:</strong></label>
             {{ data_form.date(class="form-control", required=True, type="data", autofocus=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Номер маршрута: </strong></label>
             {{ data_form.route_number(class="form-control", required=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Начало смены:</strong></label>
             {{ data_form.start_of_work(class="form-control", required=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Окончание смены:</strong></label>
             {{ data_form.end_of_work(class="form-control", required=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Тепловоз: ЧМЭ3 -</strong></label>
             {{ data_form.locomotive_number(class="form-control", required=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Дизельное топливо принял:</strong></label>
             {{ data_form.beginning_fuel_liters(class="form-control", required=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Дизельное топливо сдал:</strong></label>
             {{ data_form.end_fuel_litres(class="form-control", required=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Удельный вес топлива:</strong></label>
             {{ data_form.specific_weight(class="form-control", required=True) }}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Норма:</strong></label>
             {{ data_form.norm(class="form-control", required=True) }}
         </div>
