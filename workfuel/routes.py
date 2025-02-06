@@ -2,7 +2,7 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
-from workfuel.helpers import validate_settings_form
+from workfuel.helpers import validate_settings_form, validate_create_work_form
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
@@ -145,65 +145,75 @@ def create_work_form_get():
 def create_work_form_post():
     data_form = DataForm(request.form)
 
-    date_str = request.form.get('date')
+    date_str = request.form.get('date', '').strip()
+    start_of_work_str = request.form.get('start_of_work', '').strip()
+    end_of_work_str = request.form.get('end_of_work', '').strip()
+
+    route_number = request.form.get('route_number', '').strip()
+    locomotive_number = request.form.get('locomotive_number', '').strip()
+    beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
+    end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
+    specific_weight = request.form.get('specific_weight', '').strip()
+    norm = request.form.get('norm', '').strip()
+
+    errors = validate_create_work_form(date_str, route_number, locomotive_number, start_of_work_str,
+                                       end_of_work_str, beginning_fuel_liters,
+                                       end_fuel_litres, specific_weight, norm
+                                       )
+
+    if errors:
+        for error in errors:
+            flash(error, 'danger')
+        return render_template('data_form.html', data_form=data_form)
+
     date = datetime.strptime(date_str, '%Y.%m.%d').date()
-    route_number = request.form.get('route_number')
-    start_of_work_str = request.form.get('start_of_work')
-    start_of_work = datetime.strptime(start_of_work_str, '%H:%M').time()
-    end_of_work_str = request.form.get('end_of_work')
-    end_of_work = datetime.strptime(end_of_work_str, '%H:%M').time()
+    start_of_work = datetime.combine(date, datetime.strptime(start_of_work_str, '%H:%M').time())
+    end_of_work = datetime.combine(date, datetime.strptime(end_of_work_str, '%H:%M').time())
 
-    start_of_work = datetime.combine(date, start_of_work)
-    end_of_work = datetime.combine(date, end_of_work)
-    locomotive_number = request.form.get('locomotive_number')
-    beginning_fuel_liters = request.form.get('beginning_fuel_liters')
-    end_fuel_litres = request.form.get('end_fuel_litres')
-    specific_weight = request.form.get('specific_weight')
-    norm = request.form.get('norm')
+    try:
+        new_work_time = WorkTime(
+            date=date,
+            route_number=int(route_number),
+            start_of_work=start_of_work,
+            end_of_work=end_of_work,
+            user_id=session['user_id']
+        )
+        db.session.add(new_work_time)
+        db.session.commit()
 
-    if data_form.validate_on_submit():
-        try:
+        new_locomotive = Locomotive(
+            locomotive_number=int(locomotive_number),
+            driver=session['user_id']
+        )
+        db.session.add(new_locomotive)
+        db.session.commit()
 
-            new_work_time = WorkTime(
-                date=date,
-                route_number=route_number,
-                start_of_work=start_of_work,
-                end_of_work=end_of_work,
-                user_id=session['user_id']
-            )
-            db.session.add(new_work_time)
-            db.session.commit()
+        specific_weight = float(specific_weight)
+        beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
+        end_fuel_kilo = int(end_fuel_litres) * specific_weight
+        fact = beginning_fuel_kilo - end_fuel_kilo
 
-            new_locomotive = Locomotive(
-                locomotive_number=locomotive_number,
-                driver=session['user_id']
-            )
-            db.session.add(new_locomotive)
-            db.session.commit()
+        new_fuel = Fuel(
+            beginning_fuel_liters=int(beginning_fuel_liters),
+            beginning_fuel_kilo=beginning_fuel_kilo,
+            end_fuel_litres=int(end_fuel_litres),
+            end_fuel_kilo=end_fuel_kilo,
+            specific_weight=specific_weight,
+            norm=float(norm),
+            fact=fact,
+            locomotive_id=new_locomotive.id
+        )
+        db.session.add(new_fuel)
+        db.session.commit()
 
-            new_fuel = Fuel(
-                beginning_fuel_liters=beginning_fuel_liters,
-                beginning_fuel_kilo=int(beginning_fuel_liters) * float(specific_weight),
-                end_fuel_litres=end_fuel_litres,
-                end_fuel_kilo=int(end_fuel_litres) * float(specific_weight),
-                specific_weight=specific_weight,
-                norm=float(norm),
-                fact=int(beginning_fuel_liters) * float(specific_weight) - int(end_fuel_litres) * float(specific_weight),
-                locomotive_id=new_locomotive.id
-            )
-            db.session.add(new_fuel)
-            db.session.commit()
+        flash('Смена успешно создана', 'success')
+        return redirect(url_for('return_profile'))
 
-            flash('Смена успешно создана', 'success')
-            print('Смена успешно создана')
-            return redirect(url_for('return_profile'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'An error occurred: {str(e)}', 'danger')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
 
-        return render_template('data_form.html', data_form=data_form)
-    else:
-        return render_template('data_form.html', data_form=data_form)
+    return render_template('data_form.html', data_form=data_form)
 
 
 @app.route('/settings', methods=['GET'])
@@ -237,13 +247,14 @@ def post_settings():
 
         for field, value in form_data.items():
             if hasattr(settings_params, field):
-                setattr(settings_params, field, int(value))
+                setattr(settings_params, field, float(value))
 
-        if not validate_settings_form(settings_params.park_l_norm, settings_params.park_g_norm, settings_params.park_e_norm,
-            settings_params.park_z_norm, settings_params.park_vm_norm, settings_params.park_nijny_norm,
-            settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm, settings_params.hot_state,
-            settings_params.cool_state
-        ):
+        if not validate_settings_form(settings_params.park_l_norm, settings_params.park_g_norm,
+                                      settings_params.park_e_norm,settings_params.park_z_norm,
+                                      settings_params.park_vm_norm, settings_params.park_nijny_norm,
+                                      settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
+                                      settings_params.hot_state, settings_params.cool_state
+                                      ):
             flash("Some settings are invalid.", "danger")
             return render_template("settings.html", settings_form=settings_form)
 
