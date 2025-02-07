@@ -1,5 +1,5 @@
 from flask import flash
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def validate_settings_form(
@@ -85,5 +85,17 @@ def validate_create_work_form(date_str, route_number, locomotive_number, start_o
             float(value)
         except ValueError:
             errors.append(f'Ошибка: {field_name} должно быть числом')
+
+    try:
+        start_time = datetime.strptime(start_of_work, '%H:%M')
+        end_time = datetime.strptime(end_of_work, '%H:%M')
+
+        if end_time < start_time:
+            end_time += timedelta(days=1)
+
+        if end_time - start_time < timedelta(hours=3):
+            errors.append('Продолжительность смены не может быть менее трёх (3) часов')
+    except ValueError:
+        errors.append('Ошибка при вычислении времени работы')
 
     return errors

@@ -50,9 +50,16 @@
             </ul>
             <hr/>
         {% endfor %}
+            <ul>
+                <li>
+                    <span><strong>Общее рабочее время:</strong></span>
+                </li>
+            </ul>
+    <hr/>
     <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% else %}
         <p>Нет данных для отображения. Добавьте данные в базу.</p>
+
     <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% endif %}
 </div>
