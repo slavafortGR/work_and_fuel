@@ -18,7 +18,7 @@
 
     <form action="/create" method="POST">
         <div class="mb-3">
-            {{ data_form.csrf_token() }}
+            {{ data_form.hidden_tag() }}
             <label class="form-label"><strong>Дата:</strong></label>
             {{ data_form.date(class="form-control", required=True, type="data", autofocus=True) }}
         </div>

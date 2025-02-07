@@ -82,7 +82,7 @@ def register_user_post():
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
-    return redirect(url_for('login_user_get'))
+    return redirect(url_for('return_main_page'))
 
 
 @app.route('/profile', methods=['GET'])
@@ -221,16 +221,16 @@ def get_settings():
     settings_params = Settings.query.first() or Settings()
 
     settings_dict = {
-        "park_l_norm": settings_params.park_l_norm,
-        "park_g_norm": settings_params.park_g_norm,
-        "park_e_norm": settings_params.park_e_norm,
-        "park_z_norm": settings_params.park_z_norm,
-        "park_vm_norm": settings_params.park_vm_norm,
-        "park_nijny_norm": settings_params.park_nijny_norm,
-        "park_vchd_3_norm": settings_params.park_vchd_3_norm,
-        "park_tch_1_norm": settings_params.park_tch_1_norm,
-        "hot_state": settings_params.hot_state,
-        "cool_state": settings_params.cool_state
+        'park_l_norm': settings_params.park_l_norm,
+        'park_g_norm': settings_params.park_g_norm,
+        'park_e_norm': settings_params.park_e_norm,
+        'park_z_norm': settings_params.park_z_norm,
+        'park_vm_norm': settings_params.park_vm_norm,
+        'park_nijny_norm': settings_params.park_nijny_norm,
+        'park_vchd_3_norm': settings_params.park_vchd_3_norm,
+        'park_tch_1_norm': settings_params.park_tch_1_norm,
+        'hot_state': settings_params.hot_state,
+        'cool_state': settings_params.cool_state
     }
 
     return render_template('settings.html', settings_params=SettingsForm(request.form), settings_dict=settings_dict)
@@ -249,20 +249,23 @@ def post_settings():
             if hasattr(settings_params, field):
                 setattr(settings_params, field, float(value))
 
-        if not validate_settings_form(settings_params.park_l_norm, settings_params.park_g_norm,
-                                      settings_params.park_e_norm,settings_params.park_z_norm,
-                                      settings_params.park_vm_norm, settings_params.park_nijny_norm,
-                                      settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
-                                      settings_params.hot_state, settings_params.cool_state
-                                      ):
-            flash("Some settings are invalid.", "danger")
-            return render_template("settings.html", settings_form=settings_form)
+        if not validate_settings_form(
+                settings_params.park_l_norm, settings_params.park_g_norm,
+                settings_params.park_e_norm, settings_params.park_z_norm,
+                settings_params.park_vm_norm, settings_params.park_nijny_norm,
+                settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
+                settings_params.hot_state, settings_params.cool_state
+        ):
+
+            flash('Проверьте корректность ввода', 'danger')
+            return render_template('settings.html', settings_form=settings_form)
 
         db.session.add(settings_params)
         db.session.commit()
-        flash("Settings successfully update", "success")
-        return redirect(url_for("return_profile"))
+        flash('Настройки успешно обновлены', 'success')
+        return redirect(url_for('return_profile'))
 
     except Exception as e:
-        flash("An error occurred: " + repr(e), "danger")
-        return render_template("settings.html", settings_form=settings_form)
+        flash('Произошла ошибка: ' + repr(e), 'danger')
+        print('Ошибка')
+        return render_template('settings.html', settings_form=settings_form, settings_params=settings_params)

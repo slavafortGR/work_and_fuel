@@ -40,11 +40,11 @@ def validate_settings_form(
         flash('Норма работы депо "ТЧ-1" не может быть отрицательным числом либо нулевым значением')
         return False
 
-    if float(hot_state) <= 0:
+    if int(hot_state) <= 0:
         flash('Норма для нахождения в "Горячем состоянии" не может быть отрицательным числом либо нулевым значением')
         return False
 
-    if float(cool_state) != 0:
+    if int(cool_state) != 0:
         flash('"Нахождение в холодном состоянии" может иметь исключительно нулевое число ')
         return False
 

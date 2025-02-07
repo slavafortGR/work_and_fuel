@@ -24,7 +24,7 @@
     <h2>Регистрация</h2>
     <form action="/register" method="POST">
         <div class="mb-3">
-            {{ registration_form.csrf_token }}
+            {{ registration_form.hidden_tag() }}
             <label class="form-label"><strong>Имя:</strong></label>
             {{ registration_form.first_name(class="form-control", required=False, autofocus=True) }}
         </div>

@@ -80,16 +80,16 @@ class Settings(db.Model):
 
     __tablename__ = "settings"
     id = db.Column(db.Integer, primary_key=True)
-    park_l_norm = db.Column(db.Float, nullable=False, default=14)
-    park_g_norm = db.Column(db.Float, nullable=False, default=15)
-    park_e_norm = db.Column(db.Float, nullable=False, default=15)
-    park_z_norm = db.Column(db.Float, nullable=False, default=15)
-    park_vm_norm = db.Column(db.Float, nullable=False, default=15)
-    park_nijny_norm = db.Column(db.Float, nullable=False, default=13)
-    park_vchd_3_norm = db.Column(db.Float, nullable=False, default=13)
-    park_tch_1_norm = db.Column(db.Float, nullable=False, default=10)
-    hot_state = db.Column(db.Float, nullable=False, default=10)
-    cool_state = db.Column(db.Float, nullable=False, default=0)
+    park_l_norm = db.Column(db.Float, nullable=False, default=14.0)
+    park_g_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_e_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_z_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_vm_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_nijny_norm = db.Column(db.Float, nullable=False, default=13.0)
+    park_vchd_3_norm = db.Column(db.Float, nullable=False, default=13.0)
+    park_tch_1_norm = db.Column(db.Float, nullable=False, default=10.0)
+    hot_state = db.Column(db.Integer, nullable=False, default=10)
+    cool_state = db.Column(db.Integer, nullable=False, default=0)
 
     @classmethod
     def get_instance(cls):
