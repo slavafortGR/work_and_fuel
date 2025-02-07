@@ -219,21 +219,9 @@ def create_work_form_post():
 @app.route('/settings', methods=['GET'])
 def get_settings():
     settings_params = Settings.query.first() or Settings()
+    settings_form = SettingsForm(obj=settings_params)
 
-    settings_dict = {
-        'park_l_norm': settings_params.park_l_norm,
-        'park_g_norm': settings_params.park_g_norm,
-        'park_e_norm': settings_params.park_e_norm,
-        'park_z_norm': settings_params.park_z_norm,
-        'park_vm_norm': settings_params.park_vm_norm,
-        'park_nijny_norm': settings_params.park_nijny_norm,
-        'park_vchd_3_norm': settings_params.park_vchd_3_norm,
-        'park_tch_1_norm': settings_params.park_tch_1_norm,
-        'hot_state': settings_params.hot_state,
-        'cool_state': settings_params.cool_state
-    }
-
-    return render_template('settings.html', settings_params=SettingsForm(request.form), settings_dict=settings_dict)
+    return render_template('settings.html', settings_params=settings_params, settings_form=settings_form)
 
 
 @app.route('/settings', methods=['POST'])
@@ -257,7 +245,6 @@ def post_settings():
                 settings_params.hot_state, settings_params.cool_state
         ):
 
-            flash('Проверьте корректность ввода', 'danger')
             return render_template('settings.html', settings_form=settings_form)
 
         db.session.add(settings_params)
@@ -268,4 +255,4 @@ def post_settings():
     except Exception as e:
         flash('Произошла ошибка: ' + repr(e), 'danger')
         print('Ошибка')
-        return render_template('settings.html', settings_form=settings_form, settings_params=settings_params)
+        return render_template('settings.html', settings_form=settings_form)

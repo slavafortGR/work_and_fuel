@@ -5,73 +5,73 @@
         <h2>Settings</h2>
         <form action="/settings" method="POST">
             <div class="mb-3">
-                {{ settings_params.hidden_tag() }}
+                {{ settings_form.hidden_tag() }}
                 <label class="form-label"><strong>Норма парк Л (кг): </strong></label>
-                {{ settings_params.park_l_norm(type="number", class="form-control", autofocus=True, step="any", value=settings_dict["park_l_norm"]) }}
-                {% for error in settings_params.park_l_norm.errors %}
+                {{ settings_form.park_l_norm(type="number", class="form-control", autofocus=True, step="any") }}
+                {% for error in settings_form.park_l_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Норма парк Г (кг): </strong></label>
-                {{ settings_params.park_g_norm(type="number", class="form-control", step="any", value=settings_dict["park_g_norm"]) }}
-                {% for error in settings_params.park_g_norm.errors %}
+                {{ settings_form.park_g_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_g_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Норма парк Е (кг): </strong></label>
-                {{ settings_params.park_e_norm(type="number", class="form-control", step="any", value=settings_dict["park_e_norm"]) }}
-                {% for error in settings_params.park_e_norm.errors %}
+                {{ settings_form.park_e_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_e_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Норма парк З (кг): </strong></label>
-                {{ settings_params.park_z_norm(type="number", class="form-control", step="any", value=settings_dict["park_z_norm"]) }}
-                {% for error in settings_params.park_z_norm.errors %}
+                {{ settings_form.park_z_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_z_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Норма парк "Втормет" (кг): </strong></label>
-                {{ settings_params.park_vm_norm(type="number", class="form-control", step="any", value=settings_dict["park_vm_norm"]) }}
-                {% for error in settings_params.park_vm_norm.errors %}
+                {{ settings_form.park_vm_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_vm_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Норма парк "Нижний" (кг): </strong></label>
-                {{ settings_params.park_nijny_norm(type="number", class="form-control", step="any", value=settings_dict["park_nijny_norm"]) }}
-                {% for error in settings_params.park_nijny_norm.errors %}
+                {{ settings_form.park_nijny_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_nijny_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Норма парк "ВЧД-3" (кг): </strong></label>
-                {{ settings_params.park_vchd_3_norm(type="number", class="form-control", step="any", value=settings_dict["park_vchd_3_norm"]) }}
-                {% for error in settings_params.park_vchd_3_norm.errors %}
+                {{ settings_form.park_vchd_3_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_vchd_3_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Норма парк "ТЧ-1" (кг): </strong></label>
-                {{ settings_params.park_tch_1_norm(type="number", class="form-control", step="any", value=settings_dict["park_tch_1_norm"]) }}
-                {% for error in settings_params.park_tch_1_norm.errors %}
+                {{ settings_form.park_tch_1_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_tch_1_norm.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Горячий простой (кг): </strong></label>
-                {{ settings_params.hot_state(type="number", class="form-control", value=settings_dict["hot_state"]) }}
-                {% for error in settings_params.hot_state.errors %}
+                {{ settings_form.hot_state(type="number", class="form-control") }}
+                {% for error in settings_form.hot_state.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
             <div class="mb-3">
                 <label class="form-label"><strong>Холодный простой: </strong></label>
-                {{ settings_params.cool_state(type="number", class="form-control", value=settings_dict["cool_state"]) }}
-                {% for error in settings_params.cool_state.errors %}
+                {{ settings_form.cool_state(type="number", class="form-control") }}
+                {% for error in settings_form.cool_state.errors %}
                     <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
