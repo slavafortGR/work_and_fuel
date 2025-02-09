@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from sqlalchemy import and_
 from workfuel.models import WorkTime
 
@@ -36,3 +37,14 @@ def get_monthly_work_time(user_id):
     formatted_time = f"{int(hours):02}:{int(minutes):02}"
 
     return formatted_time
+
+
+def existing_work_time(user_id, start_of_work, end_of_work):
+    existing_shift = WorkTime.query.filter(
+        WorkTime.user_id == user_id,
+        WorkTime.start_of_work < end_of_work,
+        WorkTime.end_of_work > start_of_work
+    ).first()
+
+    if existing_shift:
+        return  existing_shift is not None

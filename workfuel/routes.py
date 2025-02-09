@@ -2,7 +2,7 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
-from workfuel.utils import get_monthly_work_time
+from workfuel.utils import get_monthly_work_time, existing_work_time
 from workfuel.helpers import validate_settings_form, validate_create_work_form
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
@@ -147,6 +147,7 @@ def create_work_form_get():
 
 @app.route('/create', methods=['POST'])
 def create_work_form_post():
+    user_id = session.get('user_id')
     data_form = DataForm(request.form)
 
     date_str = request.form.get('date', '').strip()
@@ -176,6 +177,10 @@ def create_work_form_post():
 
     if end_of_work < start_of_work:
         end_of_work += timedelta(days=1)
+
+    if existing_work_time(user_id, start_of_work, end_of_work):
+        flash('Смена с такой датой уже существует! Проверьте даты и попробуйте снова.', 'danger')
+        return render_template('data_form.html', data_form=data_form)
 
     try:
         new_work_time = WorkTime(
