@@ -2,9 +2,10 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
+from workfuel.utils import get_monthly_work_time
 from workfuel.helpers import validate_settings_form, validate_create_work_form
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @app.route('/')
@@ -125,7 +126,10 @@ def return_profile():
                     'norm': None,
                     'fact': None
                 })
-        return render_template('profile.html', user=user, combined_data=combined_data)
+
+        total_work_time = get_monthly_work_time(user_id)
+
+        return render_template('profile.html', user=user, combined_data=combined_data, total_work_time=total_work_time)
     else:
         flash('Нужно войти в систему', 'danger')
         return redirect('login_user_get')
@@ -169,6 +173,9 @@ def create_work_form_post():
     date = datetime.strptime(date_str, '%Y.%m.%d').date()
     start_of_work = datetime.combine(date, datetime.strptime(start_of_work_str, '%H:%M').time())
     end_of_work = datetime.combine(date, datetime.strptime(end_of_work_str, '%H:%M').time())
+
+    if end_of_work < start_of_work:
+        end_of_work += timedelta(days=1)
 
     try:
         new_work_time = WorkTime(
@@ -254,5 +261,4 @@ def post_settings():
 
     except Exception as e:
         flash('Произошла ошибка: ' + repr(e), 'danger')
-        print('Ошибка')
         return render_template('settings.html', settings_form=settings_form)
