@@ -3,7 +3,7 @@ from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
 from workfuel.utils import get_monthly_work_time, existing_work_time
-from workfuel.helpers import validate_settings_form, validate_create_work_form
+from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 
@@ -54,6 +54,9 @@ def register_user_post():
         last_name = registration_form.last_name.data
         personnel_number = registration_form.personnel_number.data
         password = registration_form.password.data
+
+        if not validate_register_form(personnel_number, password):
+            return render_template('login_register.html', register_tab=True, registration_form=registration_form)
 
         if User.query.filter_by(personnel_number=personnel_number).first() is not None:
             flash('Такой табельный номер уже существует', 'danger')

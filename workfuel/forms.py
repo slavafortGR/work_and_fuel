@@ -9,11 +9,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class RegistrationForm(FlaskForm):
-    first_name = StringField('First Name', validators=[Optional()], render_kw={'placeholder': 'Введите имя (необязательно)'})
-    last_name = StringField('Last Name', validators=[Optional()], render_kw={'placeholder': 'Введите фамилию (необязательно)'})
+    first_name = StringField('First Name', validators=[Optional(), Length(min=2, max=25, message='Имя должно быть не менее 2-х и не более 25-ти символов')], render_kw={'placeholder': 'Введите имя (необязательно)'})
+    last_name = StringField('Last Name', validators=[Optional(), Length(min=2, max=25, message='Фамилия должна быть не менее 2-х и не более 25-ти символов')], render_kw={'placeholder': 'Введите фамилию (необязательно)'})
     personnel_number = IntegerField('Personnel number', validators=[DataRequired()], render_kw={'placeholder': 'Введите табельный номер "XXXXX"'})
-    password = PasswordField('Password', validators=[DataRequired()], render_kw={'placeholder': 'Создайте пароль не менее 3 символов'})
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Пароли должны совпадать')])
+    password = PasswordField('Password', validators=[DataRequired(message='Пароль должен быть не менее 3-х символов')], render_kw={'placeholder': 'Создайте пароль не менее 3 символов'})
+    confirm_password = PasswordField('Подтверждение пароля', validators=[DataRequired(), EqualTo('password', message='Пароли должны совпадать')])
     submit = SubmitField('Register')
 
 
