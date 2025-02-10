@@ -91,7 +91,7 @@ def return_profile():
     user_id = session.get('user_id')
     if user_id:
         user = User.query.filter_by(id=user_id).first()
-        work_times = WorkTime.query.filter_by(user_id=user_id).all()
+        work_times = WorkTime.query.filter_by(user_id=user_id).order_by(WorkTime.start_of_work).all()
         locomotives = Locomotive.query.filter_by(driver=user_id).all()
 
         fuels = []
