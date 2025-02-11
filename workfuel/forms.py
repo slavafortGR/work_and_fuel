@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField
-from wtforms.validators import DataRequired, Optional, EqualTo, Length, NumberRange
+from wtforms.validators import DataRequired, Optional, EqualTo, Length
 
 
 class LoginForm(FlaskForm):
@@ -9,8 +9,8 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class RegistrationForm(FlaskForm):
-    first_name = StringField('First Name', validators=[Optional(), Length(min=2, max=25, message='Имя должно быть не менее 2-х и не более 25-ти символов')], render_kw={'placeholder': 'Введите имя (необязательно)'})
-    last_name = StringField('Last Name', validators=[Optional(), Length(min=2, max=25, message='Фамилия должна быть не менее 2-х и не более 25-ти символов')], render_kw={'placeholder': 'Введите фамилию (необязательно)'})
+    first_name = StringField('First Name', validators=[Optional(), Length(min=2, max=25)], render_kw={'placeholder': 'Введите имя 2-25 символов (необязательно)'})
+    last_name = StringField('Last Name', validators=[Optional(), Length(min=2, max=25)], render_kw={'placeholder': 'Введите фамилию 2-25 символов (необязательно)'})
     personnel_number = IntegerField('Personnel number', validators=[DataRequired()], render_kw={'placeholder': 'Введите табельный номер "XXXXX"'})
     password = PasswordField('Password', validators=[DataRequired(message='Пароль должен быть не менее 3-х символов')], render_kw={'placeholder': 'Создайте пароль не менее 3 символов'})
     confirm_password = PasswordField('Подтверждение пароля', validators=[DataRequired(), EqualTo('password', message='Пароли должны совпадать')])
@@ -25,7 +25,7 @@ class DataForm(FlaskForm):
     locomotive_number = IntegerField('Locomotive', validators=[DataRequired()], render_kw={'placeholder': 'Введите номер тепловоза (без серии т)'})
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
-    specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={'placeholder': 'Введите переводной коэффициент в формате: 0.XXX'})
+    specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={'placeholder': 'Введите переводной коэффициент в формате: 0.XXX или 0.ХХХХ'})
     norm = FloatField('Norm', validators=[DataRequired()], render_kw={'placeholder': 'Введите рассчитанную норму в килограммах'})
     submit = SubmitField('Create')
 

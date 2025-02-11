@@ -3,7 +3,8 @@ from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
 from workfuel.utils import get_monthly_work_time, existing_work_time
-from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form
+from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
+    validate_data_form
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 
@@ -183,6 +184,11 @@ def create_work_form_post():
 
     if existing_work_time(user_id, start_of_work, end_of_work):
         flash('Смена с такой датой уже существует! Проверьте даты и попробуйте снова.', 'danger')
+        return render_template('data_form.html', data_form=data_form)
+
+    if not validate_data_form(route_number, locomotive_number, beginning_fuel_liters,
+                              end_fuel_litres, specific_weight
+           ):
         return render_template('data_form.html', data_form=data_form)
 
     try:

@@ -77,7 +77,6 @@ class ReserveRun(db.Model):
 
 
 class Settings(db.Model):
-
     __tablename__ = "settings"
     id = db.Column(db.Integer, primary_key=True)
     park_l_norm = db.Column(db.Float, nullable=False, default=14.0)
