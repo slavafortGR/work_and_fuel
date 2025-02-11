@@ -4,10 +4,10 @@ from workfuel import db, app
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    first_name = db.Column(db.String(25), nullable=False)
-    last_name = db.Column(db.String(25), nullable=False)
+    first_name = db.Column(db.String(25), nullable=True)
+    last_name = db.Column(db.String(25), nullable=True)
     personnel_number = db.Column(db.Integer, nullable=False, unique=True)
-    password = db.Column(db.String(1024), nullable=False)
+    password = db.Column(db.String(1024), nullable=False, default=3)
 
 
 class Locomotive(db.Model):
@@ -76,5 +76,30 @@ class ReserveRun(db.Model):
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
 
 
+class Settings(db.Model):
+    __tablename__ = "settings"
+    id = db.Column(db.Integer, primary_key=True)
+    park_l_norm = db.Column(db.Float, nullable=False, default=14.0)
+    park_g_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_e_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_z_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_vm_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_nijny_norm = db.Column(db.Float, nullable=False, default=13.0)
+    park_vchd_3_norm = db.Column(db.Float, nullable=False, default=13.0)
+    park_tch_1_norm = db.Column(db.Float, nullable=False, default=10.0)
+    hot_state = db.Column(db.Integer, nullable=False, default=10)
+    cool_state = db.Column(db.Integer, nullable=False, default=0)
+
+    @classmethod
+    def get_instance(cls):
+        instance = cls.query.get(1)
+        if instance is None:
+            instance = cls(id=1)
+            db.session.add(instance)
+            db.session.commit()
+        return instance
+
+
 with app.app_context():
     db.create_all()
+    settings_params = Settings.get_instance()

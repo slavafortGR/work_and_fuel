@@ -18,6 +18,7 @@
 <div>
     <h2 >Список смен</h2>
     <a href='/create' class="btn btn-success btn-sm ms-3">Создать смену</a>
+    <a href="/settings" class="btn btn-secondary btn-sm ms-3">Настройки</a>
     <hr/>
     {% if combined_data %}
         {% for work in combined_data %}
@@ -49,9 +50,17 @@
             </ul>
             <hr/>
         {% endfor %}
+            <ul>
+                <li>
+                    <span><strong>Общее рабочее время:</strong> {{ total_work_time }} </span>
+                </li>
+            </ul>
+    <hr/>
     <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% else %}
         <p>Нет данных для отображения. Добавьте данные в базу.</p>
+
+    <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% endif %}
 </div>
 {% endblock %}

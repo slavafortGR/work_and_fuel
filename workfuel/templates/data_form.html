@@ -4,55 +4,70 @@
 <div class="content-wrapper">
     <h2>Создать рабочую смену</h2>
 
-    {% if data_form.errors %}
-        <div class="alert alert-danger">
-            <ul>
-                {% for field, errors in data_form.errors.items() %}
-                    {% for error in errors %}
-                        <li><strong>{{ field }}</strong>: {{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-
     <form action="/create" method="POST">
-        <div class="mb-3 wid_row">
-            {{ data_form.csrf_token() }}
+        <div class="mb-3">
+            {{ data_form.hidden_tag() }}
             <label class="form-label"><strong>Дата:</strong></label>
             {{ data_form.date(class="form-control", required=True, type="data", autofocus=True) }}
+            {% for error in data_form.date.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Номер маршрута: </strong></label>
             {{ data_form.route_number(class="form-control", required=True) }}
+            {% for error in data_form.route_number.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Начало смены:</strong></label>
             {{ data_form.start_of_work(class="form-control", required=True) }}
+            {% for error in data_form.start_of_work.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Окончание смены:</strong></label>
             {{ data_form.end_of_work(class="form-control", required=True) }}
+            {% for error in data_form.end_of_work.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Тепловоз: ЧМЭ3 -</strong></label>
             {{ data_form.locomotive_number(class="form-control", required=True) }}
+            {% for error in data_form.locomotive_number.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Дизельное топливо принял:</strong></label>
             {{ data_form.beginning_fuel_liters(class="form-control", required=True) }}
+            {% for error in data_form.beginning_fuel_liters.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Дизельное топливо сдал:</strong></label>
             {{ data_form.end_fuel_litres(class="form-control", required=True) }}
+            {% for error in data_form.end_fuel_litres.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Удельный вес топлива:</strong></label>
             {{ data_form.specific_weight(class="form-control", required=True) }}
+            {% for error in data_form.specific_weight.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
-        <div class="mb-3 wid_row">
+        <div class="mb-3">
             <label class="form-label"><strong>Норма:</strong></label>
             {{ data_form.norm(class="form-control", required=True) }}
+            {% for error in data_form.norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
         </div>
         <input type="submit" class="btn btn-success" value="Создать">
     </form>

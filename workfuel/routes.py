@@ -1,9 +1,12 @@
 from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
-from workfuel.forms import LoginForm, RegistrationForm, DataForm
-from workfuel.models import User, WorkTime, Locomotive, Fuel
+from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
+from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
+from workfuel.utils import get_monthly_work_time, existing_work_time
+from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
+    validate_data_form
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @app.route('/')
@@ -53,9 +56,12 @@ def register_user_post():
         personnel_number = registration_form.personnel_number.data
         password = registration_form.password.data
 
+        if not validate_register_form(personnel_number, password):
+            return render_template('login_register.html', register_tab=True, registration_form=registration_form)
+
         if User.query.filter_by(personnel_number=personnel_number).first() is not None:
             flash('Такой табельный номер уже существует', 'danger')
-            return render_template('login_register.html', registration_form=registration_form)
+            return render_template('login_register.html', register_tab=True, registration_form=registration_form)
 
         new_user = User(
             first_name=first_name,
@@ -75,13 +81,13 @@ def register_user_post():
             flash(f'Произошла ошибка: {str(e)}', 'danger')
     else:
         flash('Неверные регистрационные данные', 'danger')
-        return render_template('login_register.html', registration_form=registration_form)
+        return render_template('login_register.html', register_tab=True, registration_form=registration_form)
 
 
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
-    return redirect(url_for('login_user_get'))
+    return redirect(url_for('return_main_page'))
 
 
 @app.route('/profile', methods=['GET'])
@@ -89,7 +95,7 @@ def return_profile():
     user_id = session.get('user_id')
     if user_id:
         user = User.query.filter_by(id=user_id).first()
-        work_times = WorkTime.query.filter_by(user_id=user_id).all()
+        work_times = WorkTime.query.filter_by(user_id=user_id).order_by(WorkTime.start_of_work).all()
         locomotives = Locomotive.query.filter_by(driver=user_id).all()
 
         fuels = []
@@ -124,7 +130,10 @@ def return_profile():
                     'norm': None,
                     'fact': None
                 })
-        return render_template('profile.html', user=user, combined_data=combined_data)
+
+        total_work_time = get_monthly_work_time(user_id)
+
+        return render_template('profile.html', user=user, combined_data=combined_data, total_work_time=total_work_time)
     else:
         flash('Нужно войти в систему', 'danger')
         return redirect('login_user_get')
@@ -142,64 +151,128 @@ def create_work_form_get():
 
 @app.route('/create', methods=['POST'])
 def create_work_form_post():
+    user_id = session.get('user_id')
     data_form = DataForm(request.form)
 
-    date_str = request.form.get('date')
+    date_str = request.form.get('date', '').strip()
+    start_of_work_str = request.form.get('start_of_work', '').strip()
+    end_of_work_str = request.form.get('end_of_work', '').strip()
+
+    route_number = request.form.get('route_number', '').strip()
+    locomotive_number = request.form.get('locomotive_number', '').strip()
+    beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
+    end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
+    specific_weight = request.form.get('specific_weight', '').strip()
+    norm = request.form.get('norm', '').strip()
+
+    errors = validate_create_work_form(date_str, route_number, locomotive_number, start_of_work_str,
+                                       end_of_work_str, beginning_fuel_liters,
+                                       end_fuel_litres, specific_weight, norm
+                                       )
+
+    if errors:
+        for error in errors:
+            flash(error, 'danger')
+        return render_template('data_form.html', data_form=data_form)
+
     date = datetime.strptime(date_str, '%Y.%m.%d').date()
-    route_number = request.form.get('route_number')
-    start_of_work_str = request.form.get('start_of_work')
-    start_of_work = datetime.strptime(start_of_work_str, '%H:%M').time()
-    end_of_work_str = request.form.get('end_of_work')
-    end_of_work = datetime.strptime(end_of_work_str, '%H:%M').time()
+    start_of_work = datetime.combine(date, datetime.strptime(start_of_work_str, '%H:%M').time())
+    end_of_work = datetime.combine(date, datetime.strptime(end_of_work_str, '%H:%M').time())
 
-    start_of_work = datetime.combine(date, start_of_work)
-    end_of_work = datetime.combine(date, end_of_work)
-    locomotive_number = request.form.get('locomotive_number')
-    beginning_fuel_liters = request.form.get('beginning_fuel_liters')
-    end_fuel_litres = request.form.get('end_fuel_litres')
-    specific_weight = request.form.get('specific_weight')
-    norm = request.form.get('norm')
+    if end_of_work < start_of_work:
+        end_of_work += timedelta(days=1)
 
-    if data_form.validate_on_submit():
-        try:
-
-            new_work_time = WorkTime(
-                date=date,
-                route_number=route_number,
-                start_of_work=start_of_work,
-                end_of_work=end_of_work,
-                user_id=session['user_id']
-            )
-            db.session.add(new_work_time)
-            db.session.commit()
-
-            new_locomotive = Locomotive(
-                locomotive_number=locomotive_number,
-                driver=session['user_id']
-            )
-            db.session.add(new_locomotive)
-            db.session.commit()
-
-            new_fuel = Fuel(
-                beginning_fuel_liters=beginning_fuel_liters,
-                beginning_fuel_kilo=int(beginning_fuel_liters) * float(specific_weight),
-                end_fuel_litres=end_fuel_litres,
-                end_fuel_kilo=int(end_fuel_litres) * float(specific_weight),
-                specific_weight=specific_weight,
-                norm=float(norm),
-                fact=int(beginning_fuel_liters) * float(specific_weight) - int(end_fuel_litres) * float(specific_weight),
-                locomotive_id=new_locomotive.id
-            )
-            db.session.add(new_fuel)
-            db.session.commit()
-
-            flash('Смена успешно создана', 'success')
-            print('Смена успешно создана')
-            return redirect(url_for('return_profile'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'An error occurred: {str(e)}', 'danger')
-
+    if existing_work_time(user_id, start_of_work, end_of_work):
+        flash('Смена с такой датой уже существует! Проверьте даты и попробуйте снова.', 'danger')
         return render_template('data_form.html', data_form=data_form)
-    else:
+
+    if not validate_data_form(route_number, locomotive_number, beginning_fuel_liters,
+                              end_fuel_litres, specific_weight
+           ):
         return render_template('data_form.html', data_form=data_form)
+
+    try:
+        new_work_time = WorkTime(
+            date=date,
+            route_number=int(route_number),
+            start_of_work=start_of_work,
+            end_of_work=end_of_work,
+            user_id=session['user_id']
+        )
+        db.session.add(new_work_time)
+        db.session.commit()
+
+        new_locomotive = Locomotive(
+            locomotive_number=int(locomotive_number),
+            driver=session['user_id']
+        )
+        db.session.add(new_locomotive)
+        db.session.commit()
+
+        specific_weight = float(specific_weight)
+        beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
+        end_fuel_kilo = int(end_fuel_litres) * specific_weight
+        fact = beginning_fuel_kilo - end_fuel_kilo
+
+        new_fuel = Fuel(
+            beginning_fuel_liters=int(beginning_fuel_liters),
+            beginning_fuel_kilo=beginning_fuel_kilo,
+            end_fuel_litres=int(end_fuel_litres),
+            end_fuel_kilo=end_fuel_kilo,
+            specific_weight=specific_weight,
+            norm=float(norm),
+            fact=fact,
+            locomotive_id=new_locomotive.id
+        )
+        db.session.add(new_fuel)
+        db.session.commit()
+
+        flash('Смена успешно создана', 'success')
+        return redirect(url_for('return_profile'))
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
+
+    return render_template('data_form.html', data_form=data_form)
+
+
+@app.route('/settings', methods=['GET'])
+def get_settings():
+    settings_params = Settings.query.first() or Settings()
+    settings_form = SettingsForm(obj=settings_params)
+
+    return render_template('settings.html', settings_params=settings_params, settings_form=settings_form)
+
+
+@app.route('/settings', methods=['POST'])
+def post_settings():
+    settings_form = SettingsForm(request.form)
+
+    try:
+        form_data = request.form.to_dict()
+
+        settings_params = Settings.query.first() or Settings()
+
+        for field, value in form_data.items():
+            if hasattr(settings_params, field):
+                setattr(settings_params, field, float(value))
+
+        if not validate_settings_form(
+                settings_params.park_l_norm, settings_params.park_g_norm,
+                settings_params.park_e_norm, settings_params.park_z_norm,
+                settings_params.park_vm_norm, settings_params.park_nijny_norm,
+                settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
+                settings_params.hot_state, settings_params.cool_state
+        ):
+
+            return render_template('settings.html', settings_form=settings_form)
+
+        db.session.add(settings_params)
+        db.session.commit()
+        flash('Настройки успешно обновлены', 'success')
+        return redirect(url_for('return_profile'))
+
+    except Exception as e:
+        flash('Произошла ошибка: ' + repr(e), 'danger')
+        return render_template('settings.html', settings_form=settings_form)
