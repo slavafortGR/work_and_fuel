@@ -1,26 +1,39 @@
 from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
+from workfuel.logger import logger
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
 from workfuel.utils import get_monthly_work_time, existing_work_time
-from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
-    validate_data_form
+from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, validate_data_form
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 
 
+def log_exceptions(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Ошибка в {func.__name__}: {str(e)}", exc_info=True)
+            return render_template("error.html"), 500
+    return wrapper
+
+
 @app.route('/')
+@log_exceptions
 def return_main_page():
     return render_template('main_page.html')
 
 
 @app.route('/login', methods=['GET'])
+@log_exceptions
 def login_user_get():
     login_form = LoginForm(request.form)
     return render_template('login_register.html', login_tab=True, login_form=login_form)
 
 
 @app.route('/login', methods=['POST'])
+@log_exceptions
 def login_user_post():
     login_form = LoginForm(request.form)
 
@@ -41,12 +54,14 @@ def login_user_post():
 
 
 @app.route('/register', methods=['GET'])
+@log_exceptions
 def register_user_get():
     registration_form = RegistrationForm(request.form)
     return render_template('login_register.html', register_tab=True, registration_form=registration_form)
 
 
 @app.route('/register', methods=['POST'])
+@log_exceptions
 def register_user_post():
     registration_form = RegistrationForm(request.form)
 
@@ -85,12 +100,14 @@ def register_user_post():
 
 
 @app.route('/logout')
+@log_exceptions
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('return_main_page'))
 
 
 @app.route('/profile', methods=['GET'])
+@log_exceptions
 def return_profile():
     user_id = session.get('user_id')
     if user_id:
@@ -140,6 +157,7 @@ def return_profile():
 
 
 @app.route('/create', methods=['GET'])
+@log_exceptions
 def create_work_form_get():
     data_form = DataForm(request.form)
 
@@ -150,6 +168,7 @@ def create_work_form_get():
 
 
 @app.route('/create', methods=['POST'])
+@log_exceptions
 def create_work_form_post():
     user_id = session.get('user_id')
     data_form = DataForm(request.form)
@@ -238,6 +257,7 @@ def create_work_form_post():
 
 
 @app.route('/settings', methods=['GET'])
+@log_exceptions
 def get_settings():
     settings_params = Settings.query.first() or Settings()
     settings_form = SettingsForm(obj=settings_params)
@@ -246,6 +266,7 @@ def get_settings():
 
 
 @app.route('/settings', methods=['POST'])
+@log_exceptions
 def post_settings():
     settings_form = SettingsForm(request.form)
 

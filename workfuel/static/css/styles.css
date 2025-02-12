@@ -23,3 +23,10 @@
   margin-bottom: 15px;
   width: 33.5%;
 }
+
+body {
+    background: url("/static/images/chme_background_2.jpg") no-repeat center center fixed;
+    background-size: cover;
+    background-position: 40% center;
+    background-position: 40% top;
+}
