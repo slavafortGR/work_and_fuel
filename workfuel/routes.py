@@ -1,3 +1,5 @@
+import functools
+
 from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
@@ -10,12 +12,17 @@ from datetime import datetime, timedelta
 
 
 def log_exceptions(func):
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as e:
             logger.error(f"Ошибка в {func.__name__}: {str(e)}", exc_info=True)
-            return render_template("error.html"), 500
+            from flask import request
+            if request:
+                return render_template("error.html"), 500
+            else:
+                raise
     return wrapper
 
 
@@ -153,7 +160,7 @@ def return_profile():
         return render_template('profile.html', user=user, combined_data=combined_data, total_work_time=total_work_time)
     else:
         flash('Нужно войти в систему', 'danger')
-        return redirect('login_user_get')
+        return redirect(url_for('login_user_get'))
 
 
 @app.route('/create', methods=['GET'])
