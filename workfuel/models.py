@@ -76,8 +76,18 @@ class ReserveRun(db.Model):
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
 
 
+class Log(db.Model):
+    __tablename__ = 'logs'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+    client_ip = db.Column(db.String(32), nullable=False)
+    locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
+    fuel_id = db.Column(db.Integer, db.ForeignKey('fuels.id'), nullable=False)
+    worktime_id = db.Column(db.Integer, db.ForeignKey('worktime.id'), nullable=False)
+
+
 class Settings(db.Model):
-    __tablename__ = "settings"
+    __tablename__ = 'settings'
     id = db.Column(db.Integer, primary_key=True)
     park_l_norm = db.Column(db.Float, nullable=False, default=14.0)
     park_g_norm = db.Column(db.Float, nullable=False, default=15.0)
