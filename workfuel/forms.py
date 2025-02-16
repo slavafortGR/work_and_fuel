@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField, SelectMultipleField
 from wtforms.validators import DataRequired, Optional, EqualTo, Length
 
 
@@ -23,10 +23,16 @@ class DataForm(FlaskForm):
     start_of_work = DateTimeField('Start work', validators=[DataRequired()], format='%H:%M', render_kw={'placeholder': 'Введите время начала смены в формате: чч:мм'})
     end_of_work = DateTimeField('End work', validators=[DataRequired()], format='%H:%M', render_kw={'placeholder': 'Введите время окончания смены в формате: чч:мм'})
     locomotive_number = IntegerField('Locomotive', validators=[DataRequired()], render_kw={'placeholder': 'Введите номер тепловоза (без серии т)'})
+    activities = SelectMultipleField('Выберите рабочие парки', choices=[
+        (1, 'Парк "Л"'), (2, 'Парк "Г"'), (3, 'Парк "Е"'), (4, 'Парк "З"'),
+        (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
+        (8, 'Парк "ТЧ-1"'), (9, 'Горячий прстой'), (10, 'Холодный простой')
+    ], coerce=int)
+    work_hours = StringField('Отработанное время (ввод через пробел)', validators=[DataRequired()])
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={'placeholder': 'Введите переводной коэффициент в формате: 0.XXX или 0.ХХХХ'})
-    norm = FloatField('Norm', validators=[DataRequired()], render_kw={'placeholder': 'Введите рассчитанную норму в килограммах'})
+    add_fuel = IntegerField('Add Fuel', render_kw={'placeholder': 'Введите количество топлива в литрах (при экипировке)'})
     submit = SubmitField('Create')
 
 

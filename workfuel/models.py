@@ -53,15 +53,16 @@ class MovementTime(db.Model):
 class WorkersPark(db.Model):
     __tablename__ = 'workersparks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(25), nullable=False, unique=True)
-    norm = db.Column(db.Float, nullable=False)
-    locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
-
-
-class Maintenance(db.Model):
-    __tablename__ = 'maintenance'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    db.Column(db.Boolean, default=False, nullable=True)
+    park_l = db.Column(db.Float, nullable=True)
+    park_g = db.Column(db.Float, nullable=True)
+    park_e = db.Column(db.Float, nullable=True)
+    park_z = db.Column(db.Float, nullable=True)
+    park_vm = db.Column(db.Float, nullable=True)
+    park_nijny = db.Column(db.Float, nullable=True)
+    park_vchd_3 = db.Column(db.Float, nullable=True)
+    park_tch_1 = db.Column(db.Float, nullable=True)
+    hot_state = db.Column(db.Float, nullable=True)
+    cool_state = db.Column(db.Float, nullable=True)
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
 
 

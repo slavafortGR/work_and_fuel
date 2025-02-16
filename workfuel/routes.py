@@ -180,6 +180,12 @@ def create_work_form_post():
     user_id = session.get('user_id')
     data_form = DataForm(request.form)
 
+    data_form.activities.choices = [
+        (1, 'Парк "Л"'), (2, 'Парк "Г"'),(3, 'Парк "Е"'),(4, 'Парк "З"'),
+        (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
+        (8, 'Парк "ТЧ-1"'), (9, 'Горячий простой'), (10, 'Холодный простой')
+    ]
+
     date_str = request.form.get('date', '').strip()
     start_of_work_str = request.form.get('start_of_work', '').strip()
     end_of_work_str = request.form.get('end_of_work', '').strip()
@@ -216,6 +222,12 @@ def create_work_form_post():
                               end_fuel_litres, specific_weight
            ):
         return render_template('data_form.html', data_form=data_form)
+
+    if data_form.validate_on_submit():
+        park_ids = data_form.parks.data
+        work_hours = data_form.work_hours.data.split()
+        hot_time = data_form.hot_state.data
+        cool_time = data_form.cool_state.data
 
     try:
         new_work_time = WorkTime(
