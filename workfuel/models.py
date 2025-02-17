@@ -47,11 +47,11 @@ class MovementTime(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     start_movement = db.Column(db.Float, nullable=False)
     end_movement = db.Column(db.Float, nullable=False)
-    workerspark_id = db.Column(db.Integer, db.ForeignKey('workersparks.id'), nullable=False)
+    workerspark_id = db.Column(db.Integer, db.ForeignKey('workparks.id'), nullable=False)
 
 
-class WorkersPark(db.Model):
-    __tablename__ = 'workersparks'
+class WorkParks(db.Model):
+    __tablename__ = 'workparks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     park_l = db.Column(db.Float, nullable=True)
     park_g = db.Column(db.Float, nullable=True)

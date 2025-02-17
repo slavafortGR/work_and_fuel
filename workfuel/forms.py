@@ -32,7 +32,7 @@ class DataForm(FlaskForm):
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={'placeholder': 'Введите переводной коэффициент в формате: 0.XXX или 0.ХХХХ'})
-    add_fuel = IntegerField('Add Fuel', render_kw={'placeholder': 'Введите количество топлива в литрах (при экипировке)'})
+    add_fuel = IntegerField('Add Fuel', validators=[Optional()], render_kw={'placeholder': 'Введите количество топлива в литрах (при экипировке)'})
     submit = SubmitField('Create')
 
 

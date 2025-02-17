@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 def validate_create_work_form(date_str, route_number, locomotive_number, start_of_work,
                               end_of_work, beginning_fuel_liters,
-                              end_fuel_litres, specific_weight, norm
+                              end_fuel_litres, specific_weight
                               ):
     errors = []
 
@@ -30,7 +30,6 @@ def validate_create_work_form(date_str, route_number, locomotive_number, start_o
         'Дизельное топливо принял': beginning_fuel_liters,
         'Дизельное топливо сдал': end_fuel_litres,
         'Удельный вес топлива': specific_weight,
-        'Норма': norm
     }.items():
         try:
             float(value)
