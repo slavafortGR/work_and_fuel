@@ -6,7 +6,8 @@ from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.logger import logger
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, WorkParks
 from workfuel.utils import get_monthly_work_time, existing_work_time
-from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, validate_data_form
+from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
+    validate_data_form, convert_to_decimal_hours
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 
@@ -229,16 +230,38 @@ def create_work_form_post():
             return render_template('data_form.html', data_form=data_form)
 
         try:
-            work_hours = [float(h) for h in work_hours]
+            work_hours = [convert_to_decimal_hours(h) for h in work_hours]
+
+            if sum(work_hours) > 12:
+                flash("Ошибка: сумма рабочих часов не может превышать 12 часов!", "danger")
+                return render_template('data_form.html', data_form=data_form)
+
+            # try:
+            #     validate_work_time(start_of_work_str, end_of_work_str, work_hours)
+            # except ValueError as e:
+            #     flash(str(e), "danger")
+            #     return render_template('data_form.html', data_form=data_form)
 
             settings = Settings.query.first()
+
+            park_norms = {
+                1: settings.park_l_norm,
+                2: settings.park_g_norm,
+                3: settings.park_e_norm,
+                4: settings.park_z_norm,
+                5: settings.park_vm_norm,
+                6: settings.park_nijny_norm,
+                7: settings.park_vchd_3_norm,
+                8: settings.park_tch_1_norm,
+                9: settings.hot_state,
+                10: settings.cool_state
+            }
+
             norm = 0
 
             for activity, hours in zip(park_ids, work_hours):
-                if isinstance(activity, int) and activity <= 8:
-                    park = WorkParks.query.get(activity)
-                    if park:
-                        norm += settings.park * hours
+                if 1<= activity <= 8:
+                    norm += park_norms.get(activity, 0) * hours
                 elif activity == 9:
                     norm += settings.hot_state * hours
                 elif activity == 10:

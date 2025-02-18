@@ -28,7 +28,7 @@ class DataForm(FlaskForm):
         (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
         (8, 'Парк "ТЧ-1"'), (9, 'Горячий прстой'), (10, 'Холодный простой')
     ], coerce=int)
-    work_hours = StringField('Отработанное время (ввод через пробел)', validators=[DataRequired()])
+    work_hours = StringField('Отработанное время (ввод через пробел)', validators=[DataRequired()], render_kw={'placeholder': 'Формат ввода чч:мм'})
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()], render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={'placeholder': 'Введите переводной коэффициент в формате: 0.XXX или 0.ХХХХ'})

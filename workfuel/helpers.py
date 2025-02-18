@@ -139,3 +139,45 @@ def validate_data_form(route_number, locomotive_number,
         return False
 
     return True
+
+
+def convert_to_decimal_hours(time_str):
+    if not time_str or ":" not in time_str:
+        raise ValueError(f"Некорректный формат времени: '{time_str}' (ожидается 'часы:минуты')")
+
+    hours, minutes = map(int, time_str.split(":"))
+    decimal_hours = hours + round((minutes * 100 / 60) / 100, 2)
+    return decimal_hours
+
+
+def convert_to_decimal_hours(time_str):
+    """Конвертирует строку 'часы:минуты' в десятичное представление часов"""
+    if not time_str or ":" not in time_str:
+        raise ValueError(f"Некорректный формат времени: '{time_str}' (ожидается 'часы:минуты')")
+
+    hours, minutes = map(int, time_str.split(":"))
+    decimal_hours = hours + round((minutes * 100 / 60) / 100, 2)
+    return decimal_hours
+
+# def calculate_work_duration(start_time, end_time):
+#     """Вычисляет фактическое рабочее время в десятичном формате"""
+#     fmt = "%H:%M"
+#     start_dt = datetime.strptime(start_time, fmt)
+#     end_dt = datetime.strptime(end_time, fmt)
+#
+#     # Если смена переходит через полночь
+#     if end_dt < start_dt:
+#         end_dt = end_dt.replace(day=start_dt.day + 1)
+#
+#     work_duration = (end_dt - start_dt).seconds / 3600  # Переводим секунды в часы
+#     return round(work_duration, 2)
+#
+# def validate_work_time(start_time, end_time, entered_times):
+#     """Проверяет, что сумма введенного времени не меньше фактического рабочего времени"""
+#     actual_work_time = calculate_work_duration(start_time, end_time)
+#     entered_work_time = sum(convert_to_decimal_hours(t) for t in entered_times)
+#
+#     if entered_work_time < actual_work_time:
+#         raise ValueError(f"Ошибка! Введённое рабочее время ({entered_work_time} ч) меньше фактического ({actual_work_time} ч)")
+#
+#     return True  # Если всё хорошо
