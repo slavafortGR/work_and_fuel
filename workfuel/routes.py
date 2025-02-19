@@ -7,7 +7,7 @@ from workfuel.logger import logger
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, WorkParks
 from workfuel.utils import get_monthly_work_time, existing_work_time
 from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
-    validate_data_form, convert_to_decimal_hours
+    validate_data_form, convert_to_decimal_hours, validate_work_time
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 
@@ -24,6 +24,7 @@ def log_exceptions(func):
                 return 'Произошла ошибка на сервере', 500
             else:
                 raise
+
     return wrapper
 
 
@@ -226,21 +227,22 @@ def create_work_form_post():
         work_hours = data_form.work_hours.data.strip().split()
 
         if len(park_ids) != len(work_hours):
-            flash("Ошибка: количество выбранных парков/простоев и введённых часов не совпадает!", "danger")
+            flash('Ошибка: количество выбранных парков/простоев и введённых часов не совпадает!', 'danger')
             return render_template('data_form.html', data_form=data_form)
 
         try:
             work_hours = [convert_to_decimal_hours(h) for h in work_hours]
 
-            if sum(work_hours) > 12:
-                flash("Ошибка: сумма рабочих часов не может превышать 12 часов!", "danger")
+            actual_work_duration = (end_of_work - start_of_work).total_seconds() / 3600
+            if sum(work_hours) > actual_work_duration:
+                flash('Ошибка: сумма рабочих часов не может превышать фактическую продолжительность смены!', 'danger')
                 return render_template('data_form.html', data_form=data_form)
 
-            # try:
-            #     validate_work_time(start_of_work_str, end_of_work_str, work_hours)
-            # except ValueError as e:
-            #     flash(str(e), "danger")
-            #     return render_template('data_form.html', data_form=data_form)
+            try:
+                validate_work_time(start_of_work_str, end_of_work_str, work_hours)
+            except ValueError as e:
+                flash(str(e), 'danger')
+                return render_template('data_form.html', data_form=data_form)
 
             settings = Settings.query.first()
 
@@ -260,7 +262,7 @@ def create_work_form_post():
             norm = 0
 
             for activity, hours in zip(park_ids, work_hours):
-                if 1<= activity <= 8:
+                if 1 <= activity <= 8:
                     norm += park_norms.get(activity, 0) * hours
                 elif activity == 9:
                     norm += settings.hot_state * hours
@@ -296,7 +298,7 @@ def create_work_form_post():
                 end_fuel_kilo=end_fuel_kilo,
                 specific_weight=float(specific_weight),
                 fact=fact,
-                norm =norm,
+                norm=norm,
                 locomotive_id=new_locomotive.id
             )
             db.session.add(new_fuel)
@@ -310,7 +312,6 @@ def create_work_form_post():
             flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
 
     return render_template('data_form.html', data_form=data_form)
-
 
 
 @app.route('/settings', methods=['GET'])
@@ -343,7 +344,6 @@ def post_settings():
                 settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
                 settings_params.hot_state, settings_params.cool_state
         ):
-
             return render_template('settings.html', settings_form=settings_form)
 
         db.session.add(settings_params)
