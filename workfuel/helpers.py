@@ -20,8 +20,8 @@ def validate_create_work_form(date_str, route_number, locomotive_number, start_o
             errors.append(f'Неверный формат времени ({time_str}). Используйте ЧЧ:ММ.')
 
     for field_name, value in {
-        "Номер маршрута": route_number,
-        "Номер локомотива": locomotive_number
+        'Номер маршрута': route_number,
+        'Номер локомотива': locomotive_number
     }.items():
         if not value.isdigit():
             errors.append(f'Ошибка: {field_name} должен быть целым числом.')
@@ -170,7 +170,7 @@ def calculate_work_duration(start_of_work, end_of_work):
 
 def validate_work_time(start_of_work, end_of_work, entered_times):
     actual_work_time = calculate_work_duration(start_of_work, end_of_work)
-    print("DEBUG: entered_times =", entered_times, type(entered_times))
+    print('DEBUG: entered_times =', entered_times, type(entered_times))
     if all(isinstance(t, float) for t in entered_times):
         entered_work_time = sum(entered_times)
     else:
@@ -181,3 +181,14 @@ def validate_work_time(start_of_work, end_of_work, entered_times):
             f'Ошибка! Введённое рабочее время ({entered_work_time} ч) меньше фактического ({actual_work_time} ч)')
 
     return True
+
+
+def get_park_norms(settings):
+    park_keys = [
+        'park_l_norm', 'park_g_norm', 'park_e_norm', 'park_z_norm',
+        'park_vm_norm', 'park_nijny_norm', 'park_vchd_3_norm', 'park_tch_1_norm',
+        'park_tch_8_norm', 'park_dnepr_norm', 'park_gorvetka_norm','park_diyovka_norm',
+        'park_goryainovo_norm', 'park_kaidakskaya_norm', 'park_nizhnedneprovsk_norm',
+        'park_pristan_norm', 'hot_state', 'cool_state'
+    ]
+    return {i + 1: getattr(settings, key) for i, key in enumerate(park_keys)}

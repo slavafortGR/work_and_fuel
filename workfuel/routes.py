@@ -7,7 +7,7 @@ from workfuel.logger import logger
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, WorkParks
 from workfuel.utils import get_monthly_work_time, existing_work_time
 from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
-    validate_data_form, convert_to_decimal_hours, validate_work_time
+    validate_data_form, convert_to_decimal_hours, validate_work_time, get_park_norms
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 
@@ -185,7 +185,10 @@ def create_work_form_post():
     data_form.activities.choices = [
         (1, 'Парк "Л"'), (2, 'Парк "Г"'), (3, 'Парк "Е"'), (4, 'Парк "З"'),
         (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
-        (8, 'Парк "ТЧ-1"'), (9, 'Горячий простой'), (10, 'Холодный простой')
+        (8, 'Парк "ТЧ-1"'), (9, 'Парк "ТЧ-8"'), (10, 'Парк "Днепр Главный"'),
+        (11, 'Парк "Горветка"'), (12, 'Парк "Диёвка"'), (13, 'Парк "Горяиново"'),
+        (14, 'Парк "Кайдакская"'), (15, 'Парк "Нижнеднепровск"'), (16, 'Парк "Н.Д. Пристань"'),
+        (17, 'Горячий простой'), (18, 'Холодный простой')
     ]
 
     date_str = request.form.get('date', '').strip()
@@ -245,19 +248,7 @@ def create_work_form_post():
                 return render_template('data_form.html', data_form=data_form)
 
             settings = Settings.query.first()
-
-            park_norms = {
-                1: settings.park_l_norm,
-                2: settings.park_g_norm,
-                3: settings.park_e_norm,
-                4: settings.park_z_norm,
-                5: settings.park_vm_norm,
-                6: settings.park_nijny_norm,
-                7: settings.park_vchd_3_norm,
-                8: settings.park_tch_1_norm,
-                9: settings.hot_state,
-                10: settings.cool_state
-            }
+            park_norms = get_park_norms(settings)
 
             norm = 0
 

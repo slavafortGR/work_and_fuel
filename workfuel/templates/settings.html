@@ -62,6 +62,69 @@
                 {% endfor %}
             </div>
             <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "ТЧ-8" (кг): </strong></label>
+                {{ settings_form.park_tch_8_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_tch_8_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Днепр Главный" (кг): </strong></label>
+                {{ settings_form.park_dnepr_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_dnepr_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Горветка" (кг): </strong></label>
+                {{ settings_form.park_gorvetka_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_gorvetka_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Диёвка" (кг): </strong></label>
+                {{ settings_form.park_diyovka_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_diyovka_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Горяиново" (кг): </strong></label>
+                {{ settings_form.park_goryainovo_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_goryainovo_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Кайдакская" (кг): </strong></label>
+                {{ settings_form.park_kaidakskaya_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_kaidakskaya_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Кайдакская" (кг): </strong></label>
+                {{ settings_form.park_kaidakskaya_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_kaidakskaya_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Нижнеднепровск" (кг): </strong></label>
+                {{ settings_form.park_nizhnedneprovsk_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_nizhnedneprovsk_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Норма парк "Н.Д. Пристань" (кг): </strong></label>
+                {{ settings_form.park_pristan_norm(type="number", class="form-control", step="any") }}
+                {% for error in settings_form.park_pristan_norm.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
                 <label class="form-label"><strong>Горячий простой (кг): </strong></label>
                 {{ settings_form.hot_state(type="number", class="form-control") }}
                 {% for error in settings_form.hot_state.errors %}
