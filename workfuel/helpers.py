@@ -54,8 +54,10 @@ def validate_create_work_form(date_str, route_number, locomotive_number, start_o
 def validate_settings_form(
         park_l_norm, park_g_norm, park_e_norm,
         park_z_norm, park_vm_norm, park_nijny_norm,
-        park_vchd_3_norm, park_tch_1_norm, hot_state,
-        cool_state
+        park_vchd_3_norm, park_tch_1_norm, park_tch_8_norm,
+        park_dnepr_norm, park_gorvetka_norm, park_diyovka_norm,
+        park_goryainovo_norm, park_kaidakskaya_norm, park_pristan_norm,
+        park_nizhnedneprovsk_norm, hot_state, cool_state
 ):
     if not (10 <= float(park_l_norm) <= 20):
         flash('Проверьте корректность ввода! Норма работы парка "Л" должна быть в диапазоне от 10 до 20 кг.', 'danger')
@@ -90,6 +92,46 @@ def validate_settings_form(
 
     if not (10 <= float(park_tch_1_norm) <= 15):
         flash('Проверьте корректность ввода! Норма работы депо "ТЧ-1" должна быть в диапазоне от 10 до 15 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_tch_8_norm) <= 15):
+        flash('Проверьте корректность ввода! Норма работы депо "ТЧ-8" должна быть в диапазоне от 10 до 15 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_dnepr_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Днепр Главный" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_gorvetka_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Горветка" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_diyovka_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Диёвка" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_goryainovo_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Горяиново" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_kaidakskaya_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Кайдакская" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_nizhnedneprovsk_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Нижнеднепровск" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_pristan_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Н.Д.Пристань" должна быть в диапазоне от 10 до 20 кг.',
               'danger')
         return False
 

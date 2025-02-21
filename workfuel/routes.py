@@ -253,11 +253,11 @@ def create_work_form_post():
             norm = 0
 
             for activity, hours in zip(park_ids, work_hours):
-                if 1 <= activity <= 8:
+                if 1 <= activity <= 16:
                     norm += park_norms.get(activity, 0) * hours
-                elif activity == 9:
+                elif activity == 17:
                     norm += settings.hot_state * hours
-                elif activity == 10:
+                elif activity == 18:
                     norm += settings.cool_state * hours
 
             new_work_time = WorkTime(
@@ -333,6 +333,10 @@ def post_settings():
                 settings_params.park_e_norm, settings_params.park_z_norm,
                 settings_params.park_vm_norm, settings_params.park_nijny_norm,
                 settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
+                settings_params.park_tch_8_norm, settings_params.park_dnepr_norm,
+                settings_params.park_gorvetka_norm, settings_params.park_diyovka_norm,
+                settings_params.park_goryainovo_norm, settings_params.park_kaidakskaya_norm,
+                settings_params.park_nizhnedneprovsk_norm, settings_params.park_pristan_norm,
                 settings_params.hot_state, settings_params.cool_state
         ):
             return render_template('settings.html', settings_form=settings_form)
