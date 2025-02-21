@@ -4,7 +4,7 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.logger import logger
-from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, WorkParks
+from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
 from workfuel.utils import get_monthly_work_time, existing_work_time
 from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
     validate_data_form, convert_to_decimal_hours, validate_work_time, get_park_norms
@@ -135,6 +135,7 @@ def return_profile():
                 fuel = related_fuels[0]
                 combined_data.append({
                     'date': work_time.date,
+                    'route_number': work_time.route_number,
                     'locomotive_number': locomotive.locomotive_number,
                     'start_of_work': work_time.start_of_work.strftime('%H:%M'),
                     'end_of_work': work_time.end_of_work.strftime('%H:%M'),

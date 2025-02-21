@@ -18,13 +18,20 @@
 <div>
     <h2 >Список смен</h2>
     <a href='/create' class="btn btn-success btn-sm ms-3">Создать смену</a>
-    <a href="/settings" class="btn btn-secondary btn-sm ms-3">Настройки</a>
+    <a href="/settings" class="btn btn-secondary btn-sm ms-3">Нормы "Парки"</a>
+<!--    <a href="/settings" class="btn btn-secondary btn-sm ms-3">Нормы "Резервный пробег"</a>-->
     <hr/>
     {% if combined_data %}
         {% for work in combined_data %}
             <ul>
                 <li>
                     <span><strong>Дата: </strong> {{ work.date.strftime('%d.%m.%Y') }}</span>
+                </li>
+                <li>
+                    <span><strong>Номер маршрута: </strong> {{ work.route_number }}</span>
+                </li>
+                <li>
+                    <span><strong>Участки работы: </strong></span>
                 </li>
                 <li>
                     <span><strong>Начало смены: </strong> {{ work['start_of_work'] }}</span>
