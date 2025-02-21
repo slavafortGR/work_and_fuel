@@ -47,21 +47,22 @@ class MovementTime(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     start_movement = db.Column(db.Float, nullable=False)
     end_movement = db.Column(db.Float, nullable=False)
-    workerspark_id = db.Column(db.Integer, db.ForeignKey('workersparks.id'), nullable=False)
+    workerspark_id = db.Column(db.Integer, db.ForeignKey('workparks.id'), nullable=False)
 
 
-class WorkersPark(db.Model):
-    __tablename__ = 'workersparks'
+class WorkParks(db.Model):
+    __tablename__ = 'workparks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(25), nullable=False, unique=True)
-    norm = db.Column(db.Float, nullable=False)
-    locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
-
-
-class Maintenance(db.Model):
-    __tablename__ = 'maintenance'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    db.Column(db.Boolean, default=False, nullable=True)
+    park_l = db.Column(db.Float, nullable=True)
+    park_g = db.Column(db.Float, nullable=True)
+    park_e = db.Column(db.Float, nullable=True)
+    park_z = db.Column(db.Float, nullable=True)
+    park_vm = db.Column(db.Float, nullable=True)
+    park_nijny = db.Column(db.Float, nullable=True)
+    park_vchd_3 = db.Column(db.Float, nullable=True)
+    park_tch_1 = db.Column(db.Float, nullable=True)
+    hot_state = db.Column(db.Float, nullable=True)
+    cool_state = db.Column(db.Float, nullable=True)
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
 
 
@@ -97,6 +98,14 @@ class Settings(db.Model):
     park_nijny_norm = db.Column(db.Float, nullable=False, default=13.0)
     park_vchd_3_norm = db.Column(db.Float, nullable=False, default=13.0)
     park_tch_1_norm = db.Column(db.Float, nullable=False, default=10.0)
+    park_tch_8_norm = db.Column(db.Float, nullable=False, default=10.0)
+    park_dnepr_norm = db.Column(db.Float, nullable=False, default=15.0)
+    park_gorvetka_norm = db.Column(db.Float, nullable=False, default=14.0)
+    park_diyovka_norm = db.Column(db.Float, nullable=False, default=13.0)
+    park_goryainovo_norm = db.Column(db.Float, nullable=False, default=13.0)
+    park_kaidakskaya_norm = db.Column(db.Float, nullable=False, default=13.5)
+    park_nizhnedneprovsk_norm = db.Column(db.Float, nullable=False, default=14.5)
+    park_pristan_norm = db.Column(db.Float, nullable=False, default=14.5)
     hot_state = db.Column(db.Integer, nullable=False, default=10)
     cool_state = db.Column(db.Integer, nullable=False, default=0)
 

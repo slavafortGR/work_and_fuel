@@ -4,9 +4,10 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.logger import logger
-from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
+from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, WorkParks
 from workfuel.utils import get_monthly_work_time, existing_work_time
-from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, validate_data_form
+from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
+    validate_data_form, convert_to_decimal_hours, validate_work_time, get_park_norms
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta
 
@@ -17,12 +18,13 @@ def log_exceptions(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logger.error(f"Ошибка в {func.__name__}: {str(e)}", exc_info=True)
+            logger.error(f'Ошибка в {func.__name__}: {str(e)}', exc_info=True)
             from flask import request
             if request:
-                return render_template("error.html"), 500
+                return 'Произошла ошибка на сервере', 500
             else:
                 raise
+
     return wrapper
 
 
@@ -180,20 +182,27 @@ def create_work_form_post():
     user_id = session.get('user_id')
     data_form = DataForm(request.form)
 
+    data_form.activities.choices = [
+        (1, 'Парк "Л"'), (2, 'Парк "Г"'), (3, 'Парк "Е"'), (4, 'Парк "З"'),
+        (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
+        (8, 'Парк "ТЧ-1"'), (9, 'Парк "ТЧ-8"'), (10, 'Парк "Днепр Главный"'),
+        (11, 'Парк "Горветка"'), (12, 'Парк "Диёвка"'), (13, 'Парк "Горяиново"'),
+        (14, 'Парк "Кайдакская"'), (15, 'Парк "Нижнеднепровск"'), (16, 'Парк "Н.Д. Пристань"'),
+        (17, 'Горячий простой'), (18, 'Холодный простой')
+    ]
+
     date_str = request.form.get('date', '').strip()
     start_of_work_str = request.form.get('start_of_work', '').strip()
     end_of_work_str = request.form.get('end_of_work', '').strip()
-
     route_number = request.form.get('route_number', '').strip()
     locomotive_number = request.form.get('locomotive_number', '').strip()
     beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
     end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
     specific_weight = request.form.get('specific_weight', '').strip()
-    norm = request.form.get('norm', '').strip()
 
     errors = validate_create_work_form(date_str, route_number, locomotive_number, start_of_work_str,
                                        end_of_work_str, beginning_fuel_liters,
-                                       end_fuel_litres, specific_weight, norm
+                                       end_fuel_litres, specific_weight
                                        )
 
     if errors:
@@ -213,52 +222,85 @@ def create_work_form_post():
         return render_template('data_form.html', data_form=data_form)
 
     if not validate_data_form(route_number, locomotive_number, beginning_fuel_liters,
-                              end_fuel_litres, specific_weight
-           ):
+                              end_fuel_litres, specific_weight):
         return render_template('data_form.html', data_form=data_form)
 
-    try:
-        new_work_time = WorkTime(
-            date=date,
-            route_number=int(route_number),
-            start_of_work=start_of_work,
-            end_of_work=end_of_work,
-            user_id=session['user_id']
-        )
-        db.session.add(new_work_time)
-        db.session.commit()
+    if data_form.validate_on_submit():
+        park_ids = data_form.activities.data
+        work_hours = data_form.work_hours.data.strip().split()
 
-        new_locomotive = Locomotive(
-            locomotive_number=int(locomotive_number),
-            driver=session['user_id']
-        )
-        db.session.add(new_locomotive)
-        db.session.commit()
+        if len(park_ids) != len(work_hours):
+            flash('Ошибка: количество выбранных парков/простоев и введённых часов не совпадает!', 'danger')
+            return render_template('data_form.html', data_form=data_form)
 
-        specific_weight = float(specific_weight)
-        beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
-        end_fuel_kilo = int(end_fuel_litres) * specific_weight
-        fact = beginning_fuel_kilo - end_fuel_kilo
+        try:
+            work_hours = [convert_to_decimal_hours(h) for h in work_hours]
 
-        new_fuel = Fuel(
-            beginning_fuel_liters=int(beginning_fuel_liters),
-            beginning_fuel_kilo=beginning_fuel_kilo,
-            end_fuel_litres=int(end_fuel_litres),
-            end_fuel_kilo=end_fuel_kilo,
-            specific_weight=specific_weight,
-            norm=float(norm),
-            fact=fact,
-            locomotive_id=new_locomotive.id
-        )
-        db.session.add(new_fuel)
-        db.session.commit()
+            actual_work_duration = (end_of_work - start_of_work).total_seconds() / 3600
+            if sum(work_hours) > actual_work_duration:
+                flash('Ошибка: сумма рабочих часов не может превышать фактическую продолжительность смены!', 'danger')
+                return render_template('data_form.html', data_form=data_form)
 
-        flash('Смена успешно создана', 'success')
-        return redirect(url_for('return_profile'))
+            try:
+                validate_work_time(start_of_work_str, end_of_work_str, work_hours)
+            except ValueError as e:
+                flash(str(e), 'danger')
+                return render_template('data_form.html', data_form=data_form)
 
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
+            settings = Settings.query.first()
+            park_norms = get_park_norms(settings)
+
+            norm = 0
+
+            for activity, hours in zip(park_ids, work_hours):
+                if 1 <= activity <= 16:
+                    norm += park_norms.get(activity, 0) * hours
+                elif activity == 17:
+                    norm += settings.hot_state * hours
+                elif activity == 18:
+                    norm += settings.cool_state * hours
+
+            new_work_time = WorkTime(
+                date=date,
+                route_number=int(route_number),
+                start_of_work=start_of_work,
+                end_of_work=end_of_work,
+                user_id=session['user_id']
+            )
+            db.session.add(new_work_time)
+            db.session.commit()
+
+            new_locomotive = Locomotive(
+                locomotive_number=int(locomotive_number),
+                driver=session['user_id']
+            )
+            db.session.add(new_locomotive)
+            db.session.commit()
+
+            specific_weight = float(specific_weight)
+            beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
+            end_fuel_kilo = int(end_fuel_litres) * specific_weight
+            fact = beginning_fuel_kilo - end_fuel_kilo
+
+            new_fuel = Fuel(
+                beginning_fuel_liters=int(beginning_fuel_liters),
+                beginning_fuel_kilo=beginning_fuel_kilo,
+                end_fuel_litres=int(end_fuel_litres),
+                end_fuel_kilo=end_fuel_kilo,
+                specific_weight=float(specific_weight),
+                fact=fact,
+                norm=norm,
+                locomotive_id=new_locomotive.id
+            )
+            db.session.add(new_fuel)
+            db.session.commit()
+
+            flash(f'Смена успешно создана. Расчётный расход топлива: {round(norm, 2)} кг.', 'success')
+            return redirect(url_for('return_profile'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
 
     return render_template('data_form.html', data_form=data_form)
 
@@ -291,9 +333,12 @@ def post_settings():
                 settings_params.park_e_norm, settings_params.park_z_norm,
                 settings_params.park_vm_norm, settings_params.park_nijny_norm,
                 settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
+                settings_params.park_tch_8_norm, settings_params.park_dnepr_norm,
+                settings_params.park_gorvetka_norm, settings_params.park_diyovka_norm,
+                settings_params.park_goryainovo_norm, settings_params.park_kaidakskaya_norm,
+                settings_params.park_nizhnedneprovsk_norm, settings_params.park_pristan_norm,
                 settings_params.hot_state, settings_params.cool_state
         ):
-
             return render_template('settings.html', settings_form=settings_form)
 
         db.session.add(settings_params)
