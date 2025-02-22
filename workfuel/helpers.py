@@ -265,7 +265,7 @@ def validate_work_time(start_of_work, end_of_work, entered_times):
     else:
         entered_work_time = sum(convert_to_decimal_hours(t) for t in entered_times)
 
-    if entered_work_time < actual_work_time:
+    if round(entered_work_time, 2) < round(actual_work_time, 2):
         raise ValueError(
             f'Ошибка! Введённое рабочее время ({entered_work_time} ч) меньше фактического ({actual_work_time} ч)')
 
