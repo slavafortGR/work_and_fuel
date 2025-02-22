@@ -82,7 +82,21 @@ class Log(db.Model):
     worktime_id = db.Column(db.Integer, db.ForeignKey('worktime.id'), nullable=False)
 
 
-class Settings(db.Model):
+class BaseSettings(db.Model):
+    __abstract__ = True
+    id = db.Column(db.Integer, primary_key=True)
+
+    @classmethod
+    def get_instance(cls):
+        instance = cls.query.get(1)
+        if instance is None:
+            instance = cls(id=1)
+            db.session.add(instance)
+            db.session.commit()
+        return instance
+
+
+class Settings(BaseSettings):
     __tablename__ = 'settings'
     id = db.Column(db.Integer, primary_key=True)
     park_l_norm = db.Column(db.Float, nullable=False, default=14.0)
@@ -97,7 +111,7 @@ class Settings(db.Model):
     park_dnepr_norm = db.Column(db.Float, nullable=False, default=15.0)
     park_gorvetka_norm = db.Column(db.Float, nullable=False, default=14.0)
     park_diyovka_norm = db.Column(db.Float, nullable=False, default=13.0)
-    park_goryainovo_norm = db.Column(db.Float, nullable=False, default=13.0)
+    park_gorainovo_norm = db.Column(db.Float, nullable=False, default=13.0)
     park_kaidakskaya_norm = db.Column(db.Float, nullable=False, default=13.5)
     park_nizhnedneprovsk_norm = db.Column(db.Float, nullable=False, default=14.5)
     park_pristan_norm = db.Column(db.Float, nullable=False, default=14.5)
@@ -112,16 +126,43 @@ class Settings(db.Model):
     hot_state = db.Column(db.Integer, nullable=False, default=10)
     cool_state = db.Column(db.Integer, nullable=False, default=0)
 
-    @classmethod
-    def get_instance(cls):
-        instance = cls.query.get(1)
-        if instance is None:
-            instance = cls(id=1)
-            db.session.add(instance)
-            db.session.commit()
-        return instance
+
+class SettingsTrack(BaseSettings):
+    __tablename__ = 'settingstracks'
+    id = db.Column(db.Integer, primary_key=True)
+    dnepr_nizhnedneprovsk = db.Column(db.Float, nullable=False, default=0)
+    nizhnedneprovsk_uzel = db.Column(db.Float, nullable=False, default=0)
+    uzel_lotsmanka = db.Column(db.Float, nullable=False, default=0)
+    lotsmanka_vstrechnyy = db.Column(db.Float, nullable=False, default=0)
+    vstrechnyy_dn_gruzovoy = db.Column(db.Float, nullable=False, default=0)
+    dn_gruzovoy_obvodnaya = db.Column(db.Float, nullable=False, default=0)
+    obvodnaya_suhachovka = db.Column(db.Float, nullable=False, default=0)
+    suhachovka_diyovka = db.Column(db.Float, nullable=False, default=0)
+    diyovka_gorainovo = db.Column(db.Float, nullable=False, default=0)
+    gorainovo_dnepr = db.Column(db.Float, nullable=False, default=0)
+    dn_gruzovoy_lisky = db.Column(db.Float, nullable=False, default=0)
+    lisky_dn_gruzovoy = db.Column(db.Float, nullable=False, default=0)
+    dnepr_kaidakskaya = db.Column(db.Float, nullable=False, default=0)
+    kaidakskaya_dnepr = db.Column(db.Float, nullable=False, default=0)
+    vstrechnyy_privolnoe = db.Column(db.Float, nullable=False, default=0)
+    privolnoe_rasnaya = db.Column(db.Float, nullable=False, default=0)
+    rasnaya_privolnoe = db.Column(db.Float, nullable=False, default=0)
+    privolnoe_vstrechnyy = db.Column(db.Float, nullable=False, default=0)
+    dnepr_gorainovo = db.Column(db.Float, nullable=False, default=0)
+    gorainovo_diyovka = db.Column(db.Float, nullable=False, default=0)
+    diyovka_suhachovka = db.Column(db.Float, nullable=False, default=0)
+    suhachovka_obvodnaya = db.Column(db.Float, nullable=False, default=0)
+    obvodnaya_dn_gruzovoy = db.Column(db.Float, nullable=False, default=0)
+    dn_gruzovoy_vstrechnyy = db.Column(db.Float, nullable=False, default=0)
+    vstrechnyy_lotsmanka = db.Column(db.Float, nullable=False, default=0)
+    lotsmanka_uzel = db.Column(db.Float, nullable=False, default=0)
+    uzel_nizhnedneprovsk = db.Column(db.Float, nullable=False, default=0)
+    nizhnedneprovsk_dnepr = db.Column(db.Float, nullable=False, default=0)
+    nizhnedneprovsk_pristan = db.Column(db.Float, nullable=False, default=0)
+    pristan_nizhnedneprovsk = db.Column(db.Float, nullable=False, default=0)
 
 
 with app.app_context():
     db.create_all()
     settings_params = Settings.get_instance()
+    settings_track = SettingsTrack.get_instance()

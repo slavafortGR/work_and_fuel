@@ -56,8 +56,13 @@ def validate_settings_form(
         park_z_norm, park_vm_norm, park_nijny_norm,
         park_vchd_3_norm, park_tch_1_norm, park_tch_8_norm,
         park_dnepr_norm, park_gorvetka_norm, park_diyovka_norm,
-        park_goryainovo_norm, park_kaidakskaya_norm, park_pristan_norm,
-        park_nizhnedneprovsk_norm, hot_state, cool_state
+        park_gorainovo_norm, park_kaidakskaya_norm,
+        park_nizhnedneprovsk_norm, park_pristan_norm,
+        park_lotsmanka_norm, park_vstrechnyy_norm,
+        park_dn_gruzovoy_norm, park_obvodnaya_norm,
+        park_lisky_norm, park_privolnoe_norm,
+        park_rasnaya_norm, park_suhachovka_norm,
+        hot_state, cool_state
 ):
     if not (10 <= float(park_l_norm) <= 20):
         flash('Проверьте корректность ввода! Норма работы парка "Л" должна быть в диапазоне от 10 до 20 кг.', 'danger')
@@ -101,8 +106,9 @@ def validate_settings_form(
         return False
 
     if not (10 <= float(park_dnepr_norm) <= 20):
-        flash('Проверьте корректность ввода! Норма работы парка "Днепр Главный" должна быть в диапазоне от 10 до 20 кг.',
-              'danger')
+        flash(
+            'Проверьте корректность ввода! Норма работы парка "Днепр Главный" должна быть в диапазоне от 10 до 20 кг.',
+            'danger')
         return False
 
     if not (10 <= float(park_gorvetka_norm) <= 20):
@@ -115,7 +121,7 @@ def validate_settings_form(
               'danger')
         return False
 
-    if not (10 <= float(park_goryainovo_norm) <= 20):
+    if not (10 <= float(park_gorainovo_norm) <= 20):
         flash('Проверьте корректность ввода! Норма работы парка "Горяиново" должна быть в диапазоне от 10 до 20 кг.',
               'danger')
         return False
@@ -126,12 +132,54 @@ def validate_settings_form(
         return False
 
     if not (10 <= float(park_nizhnedneprovsk_norm) <= 20):
-        flash('Проверьте корректность ввода! Норма работы парка "Нижнеднепровск" должна быть в диапазоне от 10 до 20 кг.',
-              'danger')
+        flash(
+            'Проверьте корректность ввода! Норма работы парка "Нижнеднепровск" должна быть в диапазоне от 10 до 20 кг.',
+            'danger')
         return False
 
     if not (10 <= float(park_pristan_norm) <= 20):
         flash('Проверьте корректность ввода! Норма работы парка "Н.Д.Пристань" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_lotsmanka_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Лотсманка" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_vstrechnyy_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Встречный" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_dn_gruzovoy_norm) <= 20):
+        flash(
+            'Проверьте корректность ввода! Норма работы парка "Днепр Грузовой" должна быть в диапазоне от 10 до 20 кг.',
+            'danger')
+        return False
+
+    if not (10 <= float(park_obvodnaya_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Обводная" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_lisky_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Лиски" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_privolnoe_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Привольное" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_rasnaya_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Привольное" должна быть в диапазоне от 10 до 20 кг.',
+              'danger')
+        return False
+
+    if not (10 <= float(park_suhachovka_norm) <= 20):
+        flash('Проверьте корректность ввода! Норма работы парка "Сухачёвка" должна быть в диапазоне от 10 до 20 кг.',
               'danger')
         return False
 
@@ -212,7 +260,6 @@ def calculate_work_duration(start_of_work, end_of_work):
 
 def validate_work_time(start_of_work, end_of_work, entered_times):
     actual_work_time = calculate_work_duration(start_of_work, end_of_work)
-    print('DEBUG: entered_times =', entered_times, type(entered_times))
     if all(isinstance(t, float) for t in entered_times):
         entered_work_time = sum(entered_times)
     else:
@@ -229,8 +276,11 @@ def get_park_norms(settings):
     park_keys = [
         'park_l_norm', 'park_g_norm', 'park_e_norm', 'park_z_norm',
         'park_vm_norm', 'park_nijny_norm', 'park_vchd_3_norm', 'park_tch_1_norm',
-        'park_tch_8_norm', 'park_dnepr_norm', 'park_gorvetka_norm','park_diyovka_norm',
-        'park_goryainovo_norm', 'park_kaidakskaya_norm', 'park_nizhnedneprovsk_norm',
-        'park_pristan_norm', 'hot_state', 'cool_state'
+        'park_tch_8_norm', 'park_dnepr_norm', 'park_gorvetka_norm', 'park_diyovka_norm',
+        'park_gorainovo_norm', 'park_kaidakskaya_norm', 'park_nizhnedneprovsk_norm',
+        'park_pristan_norm', 'park_lotsmanka_norm', 'park_vstrechnyy_norm',
+        'park_dn_gruzovoy_norm', 'park_obvodnaya_norm', 'park_lisky_norm',
+        'park_privolnoe_norm', 'park_rasnaya_norm', 'park_suhachovka_norm',
+        'hot_state', 'cool_state'
     ]
     return {i + 1: getattr(settings, key) for i, key in enumerate(park_keys)}

@@ -4,7 +4,7 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.logger import logger
-from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings
+from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, SettingsTrack
 from workfuel.utils import get_monthly_work_time, existing_work_time
 from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
     validate_data_form, convert_to_decimal_hours, validate_work_time, get_park_norms
@@ -189,7 +189,10 @@ def create_work_form_post():
         (8, 'Парк "ТЧ-1"'), (9, 'Парк "ТЧ-8"'), (10, 'Парк "Днепр Главный"'),
         (11, 'Парк "Горветка"'), (12, 'Парк "Диёвка"'), (13, 'Парк "Горяиново"'),
         (14, 'Парк "Кайдакская"'), (15, 'Парк "Нижнеднепровск"'), (16, 'Парк "Н.Д. Пристань"'),
-        (17, 'Горячий простой'), (18, 'Холодный простой')
+        (17, 'Парк "Лотсманка"'), (18, 'Парк "Встречный"'), (19, 'Парк "Днепр Грузовой"'),
+        (20, 'Парк "Обводная"'), (21, 'Парк "Лиски"'), (22, 'Парк "Парк "Привольное"'),
+        (23, 'Парк "Рясная"'), (24, 'Парк "Сухачёвка"'), (25, 'Горячий простой'),
+        (26, 'Холодный простой')
     ]
 
     date_str = request.form.get('date', '').strip()
@@ -254,11 +257,11 @@ def create_work_form_post():
             norm = 0
 
             for activity, hours in zip(park_ids, work_hours):
-                if 1 <= activity <= 16:
+                if 1 <= activity <= 24:
                     norm += park_norms.get(activity, 0) * hours
-                elif activity == 17:
+                elif activity == 25:
                     norm += settings.hot_state * hours
-                elif activity == 18:
+                elif activity == 26:
                     norm += settings.cool_state * hours
 
             new_work_time = WorkTime(
@@ -336,8 +339,12 @@ def post_settings():
                 settings_params.park_vchd_3_norm, settings_params.park_tch_1_norm,
                 settings_params.park_tch_8_norm, settings_params.park_dnepr_norm,
                 settings_params.park_gorvetka_norm, settings_params.park_diyovka_norm,
-                settings_params.park_goryainovo_norm, settings_params.park_kaidakskaya_norm,
+                settings_params.park_gorainovo_norm, settings_params.park_kaidakskaya_norm,
                 settings_params.park_nizhnedneprovsk_norm, settings_params.park_pristan_norm,
+                settings_params.park_lotsmanka_norm, settings_params.park_vstrechnyy_norm,
+                settings_params.park_dn_gruzovoy_norm, settings_params.park_obvodnaya_norm,
+                settings_params.park_lisky_norm, settings_params.park_privolnoe_norm,
+                settings_params.park_rasnaya_norm, settings_params.park_suhachovka_norm,
                 settings_params.hot_state, settings_params.cool_state
         ):
             return render_template('settings.html', settings_form=settings_form)

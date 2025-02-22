@@ -1,145 +1,194 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div class="content-wrapper">
-        <h2>Settings</h2>
-        <form action="/settings" method="POST">
-            <div class="mb-3">
-                {{ settings_form.hidden_tag() }}
-                <label class="form-label"><strong>Норма парк Л (кг): </strong></label>
-                {{ settings_form.park_l_norm(type="number", class="form-control", autofocus=True, step="any") }}
-                {% for error in settings_form.park_l_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк Г (кг): </strong></label>
-                {{ settings_form.park_g_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_g_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк Е (кг): </strong></label>
-                {{ settings_form.park_e_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_e_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк З (кг): </strong></label>
-                {{ settings_form.park_z_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_z_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Втормет" (кг): </strong></label>
-                {{ settings_form.park_vm_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_vm_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Нижний" (кг): </strong></label>
-                {{ settings_form.park_nijny_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_nijny_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "ВЧД-3" (кг): </strong></label>
-                {{ settings_form.park_vchd_3_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_vchd_3_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "ТЧ-1" (кг): </strong></label>
-                {{ settings_form.park_tch_1_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_tch_1_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "ТЧ-8" (кг): </strong></label>
-                {{ settings_form.park_tch_8_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_tch_8_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Днепр Главный" (кг): </strong></label>
-                {{ settings_form.park_dnepr_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_dnepr_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Горветка" (кг): </strong></label>
-                {{ settings_form.park_gorvetka_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_gorvetka_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Диёвка" (кг): </strong></label>
-                {{ settings_form.park_diyovka_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_diyovka_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Горяиново" (кг): </strong></label>
-                {{ settings_form.park_goryainovo_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_goryainovo_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Кайдакская" (кг): </strong></label>
-                {{ settings_form.park_kaidakskaya_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_kaidakskaya_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Кайдакская" (кг): </strong></label>
-                {{ settings_form.park_kaidakskaya_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_kaidakskaya_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Нижнеднепровск" (кг): </strong></label>
-                {{ settings_form.park_nizhnedneprovsk_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_nizhnedneprovsk_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Норма парк "Н.Д. Пристань" (кг): </strong></label>
-                {{ settings_form.park_pristan_norm(type="number", class="form-control", step="any") }}
-                {% for error in settings_form.park_pristan_norm.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Горячий простой (кг): </strong></label>
-                {{ settings_form.hot_state(type="number", class="form-control") }}
-                {% for error in settings_form.hot_state.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Холодный простой: </strong></label>
-                {{ settings_form.cool_state(type="number", class="form-control") }}
-                {% for error in settings_form.cool_state.errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-            </div>
+<div class="content-wrapper">
+    <h2>Settings</h2>
+    <form action="/settings" method="POST">
+        <div class="mb-3">
+            {{ settings_form.hidden_tag() }}
+            <label class="form-label"><strong>Норма парк Л (кг): </strong></label>
+            {{ settings_form.park_l_norm(type="number", class="form-control", autofocus=True, step="any") }}
+            {% for error in settings_form.park_l_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк Г (кг): </strong></label>
+            {{ settings_form.park_g_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_g_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк Е (кг): </strong></label>
+            {{ settings_form.park_e_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_e_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк З (кг): </strong></label>
+            {{ settings_form.park_z_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_z_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Втормет" (кг): </strong></label>
+            {{ settings_form.park_vm_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_vm_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Нижний" (кг): </strong></label>
+            {{ settings_form.park_nijny_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_nijny_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "ВЧД-3" (кг): </strong></label>
+            {{ settings_form.park_vchd_3_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_vchd_3_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "ТЧ-1" (кг): </strong></label>
+            {{ settings_form.park_tch_1_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_tch_1_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "ТЧ-8" (кг): </strong></label>
+            {{ settings_form.park_tch_8_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_tch_8_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Днепр Главный" (кг): </strong></label>
+            {{ settings_form.park_dnepr_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_dnepr_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Горветка" (кг): </strong></label>
+            {{ settings_form.park_gorvetka_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_gorvetka_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Диёвка" (кг): </strong></label>
+            {{ settings_form.park_diyovka_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_diyovka_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Горяиново" (кг): </strong></label>
+            {{ settings_form.park_gorainovo_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_gorainovo_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Кайдакская" (кг): </strong></label>
+            {{ settings_form.park_kaidakskaya_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_kaidakskaya_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Нижнеднепровск" (кг): </strong></label>
+            {{ settings_form.park_nizhnedneprovsk_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_nizhnedneprovsk_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Н.Д. Пристань" (кг): </strong></label>
+            {{ settings_form.park_pristan_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_pristan_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Лотсманка" (кг): </strong></label>
+            {{ settings_form.park_lotsmanka_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_lotsmanka_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Встречный" (кг): </strong></label>
+            {{ settings_form.park_vstrechnyy_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_vstrechnyy_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Днепр Грузовой" (кг): </strong></label>
+            {{ settings_form.park_dn_gruzovoy_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_dn_gruzovoy_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Обводная" (кг): </strong></label>
+            {{ settings_form.park_obvodnaya_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_obvodnaya_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Лиски" (кг): </strong></label>
+            {{ settings_form.park_lisky_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_lisky_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Привольное" (кг): </strong></label>
+            {{ settings_form.park_privolnoe_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_privolnoe_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Рясная" (кг): </strong></label>
+            {{ settings_form.park_rasnaya_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_rasnaya_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Норма парк "Сухачёвка" (кг): </strong></label>
+            {{ settings_form.park_suhachovka_norm(type="number", class="form-control", step="any") }}
+            {% for error in settings_form.park_suhachovka_norm.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Горячий простой (кг): </strong></label>
+            {{ settings_form.hot_state(type="number", class="form-control") }}
+            {% for error in settings_form.hot_state.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Холодный простой: </strong></label>
+            {{ settings_form.cool_state(type="number", class="form-control") }}
+            {% for error in settings_form.cool_state.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-            <input type="submit" class="btn btn-primary btn-sm" value="Редактировать">
-        </form>
-    </div>
+        <input type="submit" class="btn btn-primary btn-sm" value="Редактировать">
+    </form>
+</div>
 {% endblock %}
