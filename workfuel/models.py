@@ -58,6 +58,7 @@ class WorkPark(db.Model):
     work_hours = db.Column(db.Float, nullable=False, default=0)
     hot_state = db.Column(db.Float, nullable=False, default=0)
     cool_state = db.Column(db.Float, nullable=False, default=0)
+    norm = db.Column(db.Float, nullable=False, default=0)
     locomotive = db.relationship('Locomotive', backref=db.backref('workparks', lazy=True))
 
 

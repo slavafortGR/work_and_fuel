@@ -4,7 +4,7 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.logger import logger
-from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, SettingsTrack
+from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, SettingsTrack, WorkPark
 from workfuel.utils import get_monthly_work_time, existing_work_time
 from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
     validate_data_form, convert_to_decimal_hours, validate_work_time, get_park_norms
@@ -263,6 +263,16 @@ def create_work_form_post():
                     norm += settings.hot_state * hours
                 elif activity == 26:
                     norm += settings.cool_state * hours
+
+                new_work_park = WorkPark(
+                    locomotive_id=int(locomotive_number),
+                    park_name=activity,
+                    work_hours=hours,
+                    hot_state=settings.hot_state if activity == 25 else 0,
+                    cool_state=settings.cool_state if activity == 26 else 0,
+                    norm=norm
+                )
+                db.session.add(new_work_park)
 
             new_work_time = WorkTime(
                 date=date,
