@@ -31,7 +31,12 @@
                     <span><strong>Номер маршрута: </strong> {{ work.route_number }}</span>
                 </li>
                 <li>
-                    <span><strong>Участки работы: </strong></span>
+                    <strong>Участки работы:</strong>
+                        <ul>
+                            {% for park in work.parks %}
+                                <li>{{ park.park_name }} ({{ park.work_hours }} ч)</li>
+                            {% endfor %}
+                        </ul>
                 </li>
                 <li>
                     <span><strong>Начало смены: </strong> {{ work['start_of_work'] }}</span>

@@ -131,11 +131,16 @@ def return_profile():
         combined_data = []
         for work_time, locomotive in zip(work_times, locomotives):
             related_fuels = [fuel for fuel in fuels if fuel.locomotive_id == locomotive.id]
+            workparks = WorkPark.query.filter_by(locomotive_id=locomotive.id).all()
+
+            parks_list = [{'park_name': park.park_name, 'work_hours': park.work_hours} for park in workparks]
+
             if related_fuels:
                 fuel = related_fuels[0]
                 combined_data.append({
                     'date': work_time.date,
                     'route_number': work_time.route_number,
+                    'parks': parks_list,
                     'locomotive_number': locomotive.locomotive_number,
                     'start_of_work': work_time.start_of_work.strftime('%H:%M'),
                     'end_of_work': work_time.end_of_work.strftime('%H:%M'),
@@ -251,28 +256,6 @@ def create_work_form_post():
                 flash(str(e), 'danger')
                 return render_template('data_form.html', data_form=data_form)
 
-            settings = Settings.query.first()
-            park_norms = get_park_norms(settings)
-
-            norm = 0
-
-            for activity, hours in zip(park_ids, work_hours):
-                if 1 <= activity <= 24:
-                    norm += park_norms.get(activity, 0) * hours
-                elif activity == 25:
-                    norm += settings.hot_state * hours
-                elif activity == 26:
-                    norm += settings.cool_state * hours
-
-                new_work_park = WorkPark(
-                    locomotive_id=int(locomotive_number),
-                    park_name=activity,
-                    work_hours=hours,
-                    hot_state=settings.hot_state if activity == 25 else 0,
-                    cool_state=settings.cool_state if activity == 26 else 0,
-                    norm=norm
-                )
-                db.session.add(new_work_park)
 
             new_work_time = WorkTime(
                 date=date,
@@ -290,6 +273,29 @@ def create_work_form_post():
             )
             db.session.add(new_locomotive)
             db.session.commit()
+
+            settings = Settings.query.first()
+            park_norms = get_park_norms(settings)
+
+            norm = 0
+
+            for activity, hours in zip(park_ids, work_hours):
+                if 1 <= activity <= 24:
+                    norm += park_norms.get(activity, 0) * hours
+                elif activity == 25:
+                    norm += settings.hot_state * hours
+                elif activity == 26:
+                    norm += settings.cool_state * hours
+
+                new_work_park = WorkPark(
+                    locomotive_id=new_locomotive.id,
+                    park_name=activity,
+                    work_hours=hours,
+                    hot_state=settings.hot_state if activity == 25 else 0,
+                    cool_state=settings.cool_state if activity == 26 else 0,
+                    norm=norm
+                )
+                db.session.add(new_work_park)
 
             specific_weight = float(specific_weight)
             beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
