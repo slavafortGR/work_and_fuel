@@ -5,7 +5,7 @@ from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, DataForm, SettingsForm
 from workfuel.logger import logger
 from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, SettingsTrack, WorkPark
-from workfuel.utils import get_monthly_work_time, existing_work_time
+from workfuel.utils import get_monthly_work_time, existing_work_time, PARK_NAMES
 from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
     validate_data_form, convert_to_decimal_hours, validate_work_time, get_park_norms
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -133,7 +133,10 @@ def return_profile():
             related_fuels = [fuel for fuel in fuels if fuel.locomotive_id == locomotive.id]
             workparks = WorkPark.query.filter_by(locomotive_id=locomotive.id).all()
 
-            parks_list = [{'park_name': park.park_name, 'work_hours': park.work_hours} for park in workparks]
+            parks_list = [{
+                'park_name': PARK_NAMES.get(str(park.park_name), f'Неизвестный участок {park.park_name}'),
+                'work_hours': f'{int(park.work_hours)} ч {round((park.work_hours % 1) * 60)} мин'
+            } for park in workparks]
 
             if related_fuels:
                 fuel = related_fuels[0]
@@ -255,7 +258,6 @@ def create_work_form_post():
             except ValueError as e:
                 flash(str(e), 'danger')
                 return render_template('data_form.html', data_form=data_form)
-
 
             new_work_time = WorkTime(
                 date=date,

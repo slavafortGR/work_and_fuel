@@ -16,61 +16,61 @@
 </div>
 
 <div>
-    <h2 >Список смен</h2>
+    <h2>Список смен</h2>
     <a href='/create' class="btn btn-success btn-sm ms-3">Создать смену</a>
     <a href="/settings" class="btn btn-secondary btn-sm ms-3">Нормы "Парки"</a>
-<!--    <a href="/settings" class="btn btn-secondary btn-sm ms-3">Нормы "Резервный пробег"</a>-->
+    <!--    <a href="/settings" class="btn btn-secondary btn-sm ms-3">Нормы "Резервный пробег"</a>-->
     <hr/>
     {% if combined_data %}
-        {% for work in combined_data %}
+    {% for work in combined_data %}
+    <ul>
+        <li>
+            <span><strong>Дата: </strong> {{ work.date.strftime('%d.%m.%Y') }}</span>
+        </li>
+        <li>
+            <span><strong>Номер маршрута: </strong> {{ work.route_number }}</span>
+        </li>
+        <li>
+            <strong>Участки работы:</strong>
             <ul>
-                <li>
-                    <span><strong>Дата: </strong> {{ work.date.strftime('%d.%m.%Y') }}</span>
-                </li>
-                <li>
-                    <span><strong>Номер маршрута: </strong> {{ work.route_number }}</span>
-                </li>
-                <li>
-                    <strong>Участки работы:</strong>
-                        <ul>
-                            {% for park in work.parks %}
-                                <li>{{ park.park_name }} ({{ park.work_hours }} ч)</li>
-                            {% endfor %}
-                        </ul>
-                </li>
-                <li>
-                    <span><strong>Начало смены: </strong> {{ work['start_of_work'] }}</span>
-                </li>
-                <li>
-                    <span><strong>Окончание смены: </strong> {{ work['end_of_work'] }}</span>
-                </li>
-                <li>
-                    <span><strong> Тепловоз: {% if work.locomotive_number <= 6000 %} ЧМЭ3 {% else %} ЧМЭ3т {% endif %}</strong> - {{ work.locomotive_number }}</span>
-                </li>
-                <li>
-                    <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }} л/ {{ work.beginning_fuel_kilo|round(0) }} кг</span>
-                </li>
-                <li>
-                    <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }} л/ {{ work.end_fuel_kilo|round(0) }} кг</span>
-                </li>
-                <li>
-                    <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
-                </li>
-                <li>
-                    <span><strong>Норма/ факт:</strong> {{ work.norm }}/ {{ work.fact|round(0) }} кг</span>
-                </li>
+                {% for park in work.parks %}
+                <li>{{ park.park_name }} ({{ park.work_hours }} )</li>
+                {% endfor %}
             </ul>
-            <hr/>
-        {% endfor %}
-            <ul>
-                <li>
-                    <span><strong>Общее рабочее время:</strong> {{ total_work_time }} </span>
-                </li>
-            </ul>
+        </li>
+        <li>
+            <span><strong>Начало смены: </strong> {{ work['start_of_work'] }}</span>
+        </li>
+        <li>
+            <span><strong>Окончание смены: </strong> {{ work['end_of_work'] }}</span>
+        </li>
+        <li>
+            <span><strong> Тепловоз: {% if work.locomotive_number <= 6000 %} ЧМЭ3 {% else %} ЧМЭ3т {% endif %}</strong> - {{ work.locomotive_number }}</span>
+        </li>
+        <li>
+            <span><strong>Дизельное топливо принял: </strong> {{ work.beginning_fuel_liters }} л/ {{ work.beginning_fuel_kilo|round(0) }} кг</span>
+        </li>
+        <li>
+            <span><strong>Дизельное топливо сдал:</strong> {{ work.end_fuel_litres }} л/ {{ work.end_fuel_kilo|round(0) }} кг</span>
+        </li>
+        <li>
+            <span><strong>Удельный вес топлива:</strong> {{ work.specific_weight }}</span>
+        </li>
+        <li>
+            <span><strong>Норма/ факт:</strong> {{ work.norm }}/ {{ work.fact|round(0) }} кг</span>
+        </li>
+    </ul>
+    <hr/>
+    {% endfor %}
+    <ul>
+        <li>
+            <span><strong>Общее рабочее время:</strong> {{ total_work_time }} </span>
+        </li>
+    </ul>
     <hr/>
     <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% else %}
-        <p>Нет данных для отображения. Добавьте данные в базу.</p>
+    <p>Нет данных для отображения. Добавьте данные в базу.</p>
 
     <a href='/logout' class="btn btn-danger btn-sm ms-3"> Выйти из системы</a>
     {% endif %}
