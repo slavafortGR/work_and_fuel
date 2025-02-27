@@ -135,7 +135,8 @@ def return_profile():
 
             parks_list = [{
                 'park_name': PARK_NAMES.get(str(park.park_name), f'Неизвестный участок {park.park_name}'),
-                'work_hours': f'{int(park.work_hours)} ч {round((park.work_hours % 1) * 60)} мин'
+                'work_hours': f'{int(park.work_hours)} ч {round((park.work_hours % 1) * 60)} мин,',
+                'norm': f'{round(park.norm, 2)} кг'
             } for park in workparks]
 
             if related_fuels:
@@ -279,15 +280,17 @@ def create_work_form_post():
             settings = Settings.query.first()
             park_norms = get_park_norms(settings)
 
-            norm = 0
+            workparks_list = []
 
             for activity, hours in zip(park_ids, work_hours):
                 if 1 <= activity <= 24:
-                    norm += park_norms.get(activity, 0) * hours
+                    calculated_norm = park_norms.get(activity, 0) * hours
                 elif activity == 25:
-                    norm += settings.hot_state * hours
+                    calculated_norm = settings.hot_state * hours
                 elif activity == 26:
-                    norm += settings.cool_state * hours
+                    calculated_norm = settings.cool_state * hours
+                else:
+                    calculated_norm = 0
 
                 new_work_park = WorkPark(
                     locomotive_id=new_locomotive.id,
@@ -295,9 +298,13 @@ def create_work_form_post():
                     work_hours=hours,
                     hot_state=settings.hot_state if activity == 25 else 0,
                     cool_state=settings.cool_state if activity == 26 else 0,
-                    norm=norm
+                    norm=calculated_norm
                 )
                 db.session.add(new_work_park)
+
+                workparks_list.append(calculated_norm)
+
+            total_norm = sum(workparks_list)
 
             specific_weight = float(specific_weight)
             beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
@@ -311,13 +318,13 @@ def create_work_form_post():
                 end_fuel_kilo=end_fuel_kilo,
                 specific_weight=float(specific_weight),
                 fact=fact,
-                norm=norm,
+                norm=total_norm,
                 locomotive_id=new_locomotive.id
             )
             db.session.add(new_fuel)
             db.session.commit()
 
-            flash(f'Смена успешно создана. Расчётный расход топлива: {round(norm, 2)} кг.', 'success')
+            flash(f'Смена успешно создана. Расчётный расход топлива: {round(total_norm, 2)} кг.', 'success')
             return redirect(url_for('return_profile'))
 
         except Exception as e:
