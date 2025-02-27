@@ -1,6 +1,8 @@
 from flask import flash
 from datetime import datetime, timedelta
 
+from workfuel.models import SettingsTrack
+
 
 def validate_create_work_form(date_str, route_number, locomotive_number, start_of_work,
                               end_of_work, beginning_fuel_liters,
@@ -284,3 +286,45 @@ def get_park_norms(settings):
         'hot_state', 'cool_state'
     ]
     return {i + 1: getattr(settings, key) for i, key in enumerate(park_keys)}
+
+
+# def calculate_reserve_run_norm(start_station: str, end_station: str) -> float:
+#     settingstracks = SettingsTrack.query.first()
+#     if not settingstracks:
+#         return 0
+#
+#     track_norms = {
+#         "dnepr_nizhnedneprovsk": settingstracks.dnepr_nizhnedneprovsk,
+#         "nizhnedneprovsk_uzel": settingstracks.nizhnedneprovsk_uzel,
+#         "uzel_lotsmanka": settingstracks.uzel_lotsmanka,
+#         "lotsmanka_vstrechnyy": settingstracks.lotsmanka_vstrechnyy,
+#         "vstrechnyy_dn_gruzovoy": settingstracks.vstrechnyy_dn_gruzovoy,
+#         "dn_gruzovoy_obvodnaya": settingstracks.dn_gruzovoy_obvodnaya,
+#         "obvodnaya_suhachovka": settingstracks.obvodnaya_suhachovka,
+#         "suhachovka_diyovka": settingstracks.suhachovka_diyovka,
+#         "diyovka_gorainovo": settingstracks.diyovka_gorainovo,
+#         "gorainovo_dnepr": settingstracks.gorainovo_dnepr,
+#         "dn_gruzovoy_lisky": settingstracks.dn_gruzovoy_lisky,
+#         "lisky_dn_gruzovoy": settingstracks.lisky_dn_gruzovoy,
+#         "dnepr_kaidakskaya": settingstracks.dnepr_kaidakskaya,
+#         "kaidakskaya_dnepr": settingstracks.kaidakskaya_dnepr,
+#         "vstrechnyy_privolnoe": settingstracks.vstrechnyy_privolnoe,
+#         "privolnoe_rasnaya": settingstracks.privolnoe_rasnaya,
+#         "rasnaya_privolnoe": settingstracks.rasnaya_privolnoe,
+#         "privolnoe_vstrechnyy": settingstracks.privolnoe_vstrechnyy,
+#         "dnepr_gorainovo": settingstracks.dnepr_gorainovo,
+#         "gorainovo_diyovka": settingstracks.gorainovo_diyovka,
+#         "diyovka_suhachovka": settingstracks.diyovka_suhachovka,
+#         "suhachovka_obvodnaya": settingstracks.suhachovka_obvodnaya,
+#         "obvodnaya_dn_gruzovoy": settingstracks.obvodnaya_dn_gruzovoy,
+#         "dn_gruzovoy_vstrechnyy": settingstracks.dn_gruzovoy_vstrechnyy,
+#         "vstrechnyy_lotsmanka": settingstracks.vstrechnyy_lotsmanka,
+#         "lotsmanka_uzel": settingstracks.lotsmanka_uzel,
+#         "uzel_nizhnedneprovsk": settingstracks.uzel_nizhnedneprovsk,
+#         "nizhnedneprovsk_dnepr": settingstracks.nizhnedneprovsk_dnepr,
+#         "nizhnedneprovsk_pristan": settingstracks.nizhnedneprovsk_pristan,
+#         "pristan_nizhnedneprovsk": settingstracks.pristan_nizhnedneprovsk,
+#     }
+#
+#     key = f"{start_station}_{end_station}"
+#     return track_norms.get(key, 0)

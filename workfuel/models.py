@@ -65,12 +65,17 @@ class WorkPark(db.Model):
 class ReserveRun(db.Model):
     __tablename__ = 'reserveruns'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    train_number = db.Column(db.Integer, nullable=False)
-    start_run_reserve = db.Column(db.DateTime, nullable=False)
-    end_run_reserve = db.Column(db.DateTime, nullable=False)
-    start_station = db.Column(db.String(25), nullable=False)
-    end_station = db.Column(db.String(25), nullable=False)
     locomotive_id = db.Column(db.Integer, db.ForeignKey('locomotives.id'), nullable=False)
+    travel_time = db.Column(db.Float, nullable=False)
+    segments = db.relationship('ReserveRunSegment', backref='reserve_run', cascade='all, delete-orphan')
+
+
+class ReserveRunSegment(db.Model):
+    __tablename__ = 'reserverunsegments'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    reserve_run_id = db.Column(db.Integer, db.ForeignKey('reserveruns.id', ondelete='CASCADE'), nullable=False)
+    track_name = db.Column(db.String(50), nullable=False)
+    fuel_norm = db.Column(db.Float, nullable=False)
 
 
 class Log(db.Model):
