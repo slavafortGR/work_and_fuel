@@ -73,9 +73,9 @@ class ReserveRun(db.Model):
 class ReserveRunSegment(db.Model):
     __tablename__ = 'reserverunsegments'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    reserve_run_id = db.Column(db.Integer, db.ForeignKey('reserveruns.id', ondelete='CASCADE'), nullable=False)
     track_name = db.Column(db.String(50), nullable=False)
     fuel_norm = db.Column(db.Float, nullable=False)
+    reserve_run_id = db.Column(db.Integer, db.ForeignKey('reserveruns.id', ondelete='CASCADE'), nullable=False)
 
 
 class Log(db.Model):

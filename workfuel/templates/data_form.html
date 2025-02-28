@@ -56,6 +56,20 @@
             {% endfor %}
         </div>
         <div class="mb-3">
+            <label class="form-label"><strong>Выберите все участки, по которым локомотив совершал резервный пробег (если был):</strong></label>
+            {{ data_form.activities_res_run(class="form-select", multiple=True) }}
+            {% for error in data_form.activities.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Введите общее время (в часах и минутах) всех резервных пробегов локомотива:</strong></label>
+            {{ data_form.work_hours_res_run(class="form-control") }}
+            {% for error in data_form.work_hours.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
             <label class="form-label"><strong>Дизельное топливо принял:</strong></label>
             {{ data_form.beginning_fuel_liters(class="form-control", required=True) }}
             {% for error in data_form.beginning_fuel_liters.errors %}
