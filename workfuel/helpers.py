@@ -4,22 +4,11 @@ from datetime import datetime, timedelta
 from workfuel.models import SettingsTrack
 
 
-def validate_create_work_form(date_str, route_number, locomotive_number, start_of_work,
-                              end_of_work, beginning_fuel_liters,
+def validate_create_work_form(start_of_work, end_of_work, route_number,
+                              locomotive_number, beginning_fuel_liters,
                               end_fuel_litres, specific_weight
                               ):
     errors = []
-
-    try:
-        datetime.strptime(date_str, '%Y.%m.%d')
-    except ValueError:
-        errors.append(f'Неверный формат даты ({date_str}). Используйте ГГГГ.ММ.ДД.')
-
-    for time_str in [start_of_work, end_of_work]:
-        try:
-            datetime.strptime(time_str, '%H:%M')
-        except ValueError:
-            errors.append(f'Неверный формат времени ({time_str}). Используйте ЧЧ:ММ.')
 
     for field_name, value in {
         'Номер маршрута': route_number,
@@ -39,8 +28,8 @@ def validate_create_work_form(date_str, route_number, locomotive_number, start_o
             errors.append(f'Ошибка: {field_name} должен быть числом.')
 
     try:
-        start_time = datetime.strptime(start_of_work, '%H:%M')
-        end_time = datetime.strptime(end_of_work, '%H:%M')
+        start_time = start_of_work
+        end_time = end_of_work
 
         if end_time < start_time:
             end_time += timedelta(days=1)
@@ -249,9 +238,8 @@ def convert_to_decimal_hours(time_str):
 
 
 def calculate_work_duration(start_of_work, end_of_work):
-    fmt = '%H:%M'
-    start_of_work = datetime.strptime(start_of_work, fmt)
-    end_of_work = datetime.strptime(end_of_work, fmt)
+    start_of_work = start_of_work
+    end_of_work = end_of_work
 
     if end_of_work < start_of_work:
         end_of_work = end_of_work.replace(day=start_of_work.day + 1)

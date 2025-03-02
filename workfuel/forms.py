@@ -26,22 +26,22 @@ class RegistrationForm(FlaskForm):
 
 class DataForm(FlaskForm):
     start_of_work = DateTimeLocalField('Start work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    end_of_work = DateTimeLocalField('End work', validators=[DataRequired()], format='%Y-%m-%d %H:%M')
+    end_of_work = DateTimeLocalField('End work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     route_number = IntegerField('Route number', validators=[DataRequired()],
                                 render_kw={'placeholder': 'Введите номер маршрута состоящий из семи цифр'})
     locomotive_number = IntegerField('Locomotive', validators=[DataRequired()],
                                      render_kw={'placeholder': 'Введите номер тепловоза'})
-    activities = SelectMultipleField('Выберите рабочие парки', choices=[
-        (1, 'Парк "Л"'), (2, 'Парк "Г"'), (3, 'Парк "Е"'), (4, 'Парк "З"'),
-        (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
-        (8, 'Парк "ТЧ-1"'), (9, 'Парк "ТЧ-8"'), (10, 'Парк "Днепр Главный"'),
-        (11, 'Парк "Горветка"'), (12, 'Парк "Диёвка"'), (13, 'Парк "Горяиново"'),
-        (14, 'Парк "Кайдакская"'), (15, 'Парк "Нижнеднепровск"'), (16, 'Парк "Н.Д.Пристань"'),
-        (17, 'Парк "Лотсманка"'), (18, 'Парк "Встречный"'), (19, 'Парк "Днепр Грузовой"'),
-        (20, 'Парк "Обводная"'), (21, 'Парк "Лиски"'), (22, 'Парк "Привольное"'),
-        (23, 'Парк "Рясная"'), (24, 'Парк "Сухачёвка"'), (25, 'Горячий прстой'),
-        (26, 'Холодный простой')
-    ], coerce=int)
+    # activities = SelectMultipleField('Выберите рабочие парки', choices=[
+    #     (1, 'Парк "Л"'), (2, 'Парк "Г"'), (3, 'Парк "Е"'), (4, 'Парк "З"'),
+    #     (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
+    #     (8, 'Парк "ТЧ-1"'), (9, 'Парк "ТЧ-8"'), (10, 'Парк "Днепр Главный"'),
+    #     (11, 'Парк "Горветка"'), (12, 'Парк "Диёвка"'), (13, 'Парк "Горяиново"'),
+    #     (14, 'Парк "Кайдакская"'), (15, 'Парк "Нижнеднепровск"'), (16, 'Парк "Н.Д.Пристань"'),
+    #     (17, 'Парк "Лотсманка"'), (18, 'Парк "Встречный"'), (19, 'Парк "Днепр Грузовой"'),
+    #     (20, 'Парк "Обводная"'), (21, 'Парк "Лиски"'), (22, 'Парк "Привольное"'),
+    #     (23, 'Парк "Рясная"'), (24, 'Парк "Сухачёвка"'), (25, 'Горячий прстой'),
+    #     (26, 'Холодный простой')
+    # ], coerce=int)
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()],
                                          render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()],
