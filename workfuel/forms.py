@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField, \
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField, DateTimeLocalField,\
     SelectMultipleField
 from wtforms.validators import DataRequired, Optional, EqualTo, Length
 
@@ -25,16 +25,12 @@ class RegistrationForm(FlaskForm):
 
 
 class DataForm(FlaskForm):
-    date = DateTimeField('Date', validators=[DataRequired()], format='%Y.%m.%d',
-                         render_kw={'placeholder': 'Введите дату в формате: гггг.мм.дд'})
+    start_of_work = DateTimeLocalField('Start work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    end_of_work = DateTimeLocalField('End work', validators=[DataRequired()], format='%Y-%m-%d %H:%M')
     route_number = IntegerField('Route number', validators=[DataRequired()],
-                                render_kw={'placeholder': 'Введите номер маршрута в формате: XXXXXXX'})
-    start_of_work = DateTimeField('Start work', validators=[DataRequired()], format='%H:%M',
-                                  render_kw={'placeholder': 'Введите время начала смены в формате: чч:мм'})
-    end_of_work = DateTimeField('End work', validators=[DataRequired()], format='%H:%M',
-                                render_kw={'placeholder': 'Введите время окончания смены в формате: чч:мм'})
+                                render_kw={'placeholder': 'Введите номер маршрута состоящий из семи цифр'})
     locomotive_number = IntegerField('Locomotive', validators=[DataRequired()],
-                                     render_kw={'placeholder': 'Введите номер тепловоза (без серии т)'})
+                                     render_kw={'placeholder': 'Введите номер тепловоза'})
     activities = SelectMultipleField('Выберите рабочие парки', choices=[
         (1, 'Парк "Л"'), (2, 'Парк "Г"'), (3, 'Парк "Е"'), (4, 'Парк "З"'),
         (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
@@ -46,28 +42,12 @@ class DataForm(FlaskForm):
         (23, 'Парк "Рясная"'), (24, 'Парк "Сухачёвка"'), (25, 'Горячий прстой'),
         (26, 'Холодный простой')
     ], coerce=int)
-    work_hours = StringField('Отработанное время (ввод через пробел)', validators=[DataRequired()],
-                             render_kw={'placeholder': 'Формат ввода чч:мм'})
-    activities_res_run = SelectMultipleField('Выберите рабочие парки', choices=[
-        (1, 'Днепр Главный - Нижнеднепровск'), (2, 'Нижнеднепровск - Н.Д.Узел'), (3, 'Н.Д.Узел - Лоцманка'), (4, 'Лоцманка - Встречный'),
-        (5, 'Встречный - Днепр Грузовой'), (6, 'Днепр Грузовой - Обводная'), (7, 'Обводная - Сухачёвка'),
-        (8, 'Сухачёвка - Диёвка'), (9, 'Диёвка - Горяиново'), (10, 'Горяиново - Днепр Главный'),
-        (11, 'Днепр Грузовой - Лиски'), (12, 'Лиски - Днепр Грузовой'), (13, 'Днепр Главный - Кайдакская'),
-        (14, 'Кайдакская - Днепр Главный'), (15, 'Встречный - Привольное'), (16, 'Привольное - Рясная'),
-        (17, 'Рясная - Привольное'), (18, 'Привольное - Встречный'), (19, 'Днепр Главный - Горяиново'),
-        (20, 'Горяиново - Диёвка'), (21, 'Диёвка - Сухачёвка'), (22, 'Сухачёвка - Обводная'),
-        (23, 'Обводная - Днепр Грузовой'), (24, 'Днепр Грузовой - Встречный'), (25, 'Встречный - Лотсманка'),
-        (26, 'Лотсманка - Н.Д.Узел'), (27, 'Н.Д.Узел - Нижнеднепровск'), (28, 'Нижнеднепровск - Днепр Главный'),
-        (29, 'Нижнеднепровск - Н.Д.Пристань'), (30, 'Н.Д.Пристань - Нижнеднепровск')
-    ], coerce=int)
-    work_hours_res_run = StringField('Общее отработанное время', validators=[DataRequired()],
-                             render_kw={'placeholder': 'Формат ввода чч:мм'})
     beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()],
                                          render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()],
                                  render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={
-        'placeholder': 'Введите переводной коэффициент в формате: 0.XXX или 0.ХХХХ'})
+        'placeholder': 'Введите переводной коэффициент: 0.___'})
     add_fuel = IntegerField('Add Fuel', validators=[Optional()],
                             render_kw={'placeholder': 'Введите количество топлива в литрах (при экипировке)'})
     submit = SubmitField('Create')

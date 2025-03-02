@@ -35,10 +35,9 @@ class Fuel(db.Model):
 class WorkTime(db.Model):
     __tablename__ = 'worktime'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    date = db.Column(db.DateTime, nullable=False)
-    route_number = db.Column(db.Integer, nullable=False)
     start_of_work = db.Column(db.DateTime, nullable=False)
     end_of_work = db.Column(db.DateTime, nullable=False)
+    route_number = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 

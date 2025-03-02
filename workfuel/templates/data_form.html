@@ -7,9 +7,16 @@
     <form action="/create" method="POST">
         <div class="mb-3">
             {{ data_form.hidden_tag() }}
-            <label class="form-label"><strong>Дата:</strong></label>
-            {{ data_form.date(class="form-control", required=True, type="data", autofocus=True) }}
-            {% for error in data_form.date.errors %}
+            <label class="form-label"><strong>Начало смены:</strong></label>
+            {{ data_form.start_of_work(class="form-control", required=True, type="datetime-local") }}
+            {% for error in data_form.start_of_work.errors %}
+                    <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Окончание смены:</strong></label>
+            {{ data_form.end_of_work(class="form-control", required=True, type="datetime-local") }}
+            {% for error in data_form.end_of_work.errors %}
                     <span class="text-danger">{{ error }}</span>
             {% endfor %}
         </div>
@@ -20,20 +27,7 @@
                     <span class="text-danger">{{ error }}</span>
             {% endfor %}
         </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Начало смены:</strong></label>
-            {{ data_form.start_of_work(class="form-control", required=True) }}
-            {% for error in data_form.start_of_work.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Окончание смены:</strong></label>
-            {{ data_form.end_of_work(class="form-control", required=True) }}
-            {% for error in data_form.end_of_work.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
+
         <div class="mb-3">
             <label class="form-label"><strong>Тепловоз: ЧМЭ3 -</strong></label>
             {{ data_form.locomotive_number(class="form-control", required=True) }}
@@ -51,20 +45,6 @@
         <div class="mb-3">
             <label class="form-label"><strong>Введите отработанные часы для выбранных пунктов (через пробел):</strong></label>
             {{ data_form.work_hours(class="form-control") }}
-            {% for error in data_form.work_hours.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Выберите все участки, по которым локомотив совершал резервный пробег (если был):</strong></label>
-            {{ data_form.activities_res_run(class="form-select", multiple=True) }}
-            {% for error in data_form.activities.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Введите общее время (в часах и минутах) всех резервных пробегов локомотива:</strong></label>
-            {{ data_form.work_hours_res_run(class="form-control") }}
             {% for error in data_form.work_hours.errors %}
                 <span class="text-danger">{{ error }}</span>
             {% endfor %}
