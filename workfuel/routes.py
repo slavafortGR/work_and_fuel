@@ -204,8 +204,8 @@ def create_work_form_post():
     #     (26, 'Холодный простой')
     # ]
 
-    start_of_work = request.form.get('start_of_work')
-    end_of_work = request.form.get('end_of_work')
+    start_of_work = datetime.strptime(request.form.get('start_of_work', ''), '%Y-%m-%dT%H:%M')
+    end_of_work = datetime.strptime(request.form.get('end_of_work', ''), '%Y-%m-%dT%H:%M')
     route_number = request.form.get('route_number', '').strip()
     locomotive_number = request.form.get('locomotive_number', '').strip()
     beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
@@ -221,9 +221,6 @@ def create_work_form_post():
         for error in errors:
             flash(error, 'danger')
         return render_template('data_form.html', data_form=data_form)
-
-    # start_of_work = datetime.start_of_work
-    # end_of_work = datetime.end_of_work_str
 
     if end_of_work < start_of_work:
         end_of_work += timedelta(days=1)
@@ -315,7 +312,7 @@ def create_work_form_post():
                 end_fuel_kilo=end_fuel_kilo,
                 specific_weight=float(specific_weight),
                 fact=fact,
-                # norm=total_norm,
+                norm=total_norm,
                 locomotive_id=new_locomotive.id
             )
             db.session.add(new_fuel)

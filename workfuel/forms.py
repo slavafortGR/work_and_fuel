@@ -16,7 +16,7 @@ class RegistrationForm(FlaskForm):
     last_name = StringField('Last Name', validators=[Optional(), Length(min=2, max=25)],
                             render_kw={'placeholder': 'Введите фамилию 2-25 символов (необязательно)'})
     personnel_number = IntegerField('Personnel number', validators=[DataRequired()],
-                                    render_kw={'placeholder': 'Введите табельный номер "XXXXX"'})
+                                    render_kw={'placeholder': 'Введите табельный номер "_____"'})
     password = PasswordField('Password', validators=[DataRequired(message='Пароль должен быть не менее 3-х символов')],
                              render_kw={'placeholder': 'Создайте пароль не менее 3 символов'})
     confirm_password = PasswordField('Подтверждение пароля', validators=[DataRequired(), EqualTo('password',
@@ -25,7 +25,7 @@ class RegistrationForm(FlaskForm):
 
 
 class DataForm(FlaskForm):
-    start_of_work = DateTimeLocalField('Start work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    start_of_work = DateTimeLocalField('Start work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M', render_kw={"placeholder": "дд/мм/гггг"})
     end_of_work = DateTimeLocalField('End work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     route_number = IntegerField('Route number', validators=[DataRequired()],
                                 render_kw={'placeholder': 'Введите номер маршрута состоящий из семи цифр'})
@@ -49,7 +49,7 @@ class DataForm(FlaskForm):
     specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={
         'placeholder': 'Введите переводной коэффициент: 0.___'})
     add_fuel = IntegerField('Add Fuel', validators=[Optional()],
-                            render_kw={'placeholder': 'Введите количество топлива в литрах (при экипировке)'})
+                            render_kw={'placeholder': 'Введите количество топлива в литрах (если была экипировка)'})
     submit = SubmitField('Create')
 
 
