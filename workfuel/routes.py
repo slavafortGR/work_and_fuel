@@ -121,7 +121,7 @@ def return_profile():
     user_id = session.get('user_id')
     if user_id:
         user = User.query.filter_by(id=user_id).first()
-        work_times = WorkTime.query.filter_by(user_id=user_id).order_by(WorkTime.start_of_work).all()
+        # work_times = WorkTime.query.filter_by(user_id=user_id).order_by(WorkTime.start_of_work).all()
         locomotives = Locomotive.query.filter_by(driver=user_id).all()
 
         fuels = []
@@ -129,7 +129,7 @@ def return_profile():
             fuels.extend(Fuel.query.filter_by(locomotive_id=locomotive.id).all())
 
         combined_data = []
-        for work_time, locomotive in zip(work_times, locomotives):
+        for work_time, locomotive in zip(locomotives):
             related_fuels = [fuel for fuel in fuels if fuel.locomotive_id == locomotive.id]
             workparks = WorkPark.query.filter_by(locomotive_id=locomotive.id).all()
 
@@ -211,6 +211,9 @@ def create_work_form_post():
     beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
     end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
     specific_weight = request.form.get('specific_weight', '').strip()
+    add_fuel = request.form.get('add_fuel', '')
+    workparks_input = request.form.get('workparks', '').strip()
+    reserve_routes_input = request.form.get('reserve_time', '').strip()
 
     errors = validate_create_work_form(start_of_work, end_of_work, route_number,
                                        locomotive_number, beginning_fuel_liters,
@@ -225,15 +228,15 @@ def create_work_form_post():
     if end_of_work < start_of_work:
         end_of_work += timedelta(days=1)
 
-    if existing_work_time(user_id, start_of_work, end_of_work):
-        flash('Смена с такой датой уже существует! Проверьте даты и попробуйте снова.', 'danger')
-        return render_template('data_form.html', data_form=data_form)
+    # if existing_work_time(user_id, start_of_work, end_of_work):
+    #     flash('Смена с такой датой уже существует! Проверьте даты и попробуйте снова.', 'danger')
+    #     return render_template('data_form.html', data_form=data_form)
 
-    if not validate_data_form(route_number, locomotive_number, beginning_fuel_liters,
-                              end_fuel_litres, specific_weight):
-        return render_template('data_form.html', data_form=data_form)
+    # if not validate_data_form(route_number, locomotive_number, beginning_fuel_liters,
+    #                           end_fuel_litres, specific_weight):
+    #     return render_template('data_form.html', data_form=data_form)
 
-    if data_form.validate_on_submit():
+    # if data_form.validate_on_submit():
         # park_ids = data_form.activities.data
         # work_hours = data_form.work_hours.data.strip().split()
         #
@@ -254,22 +257,58 @@ def create_work_form_post():
         #     except ValueError as e:
         #         flash(str(e), 'danger')
         #         return render_template('data_form.html', data_form=data_form)
-        try:
-            new_work_time = WorkTime(
-                start_of_work=start_of_work,
-                end_of_work=end_of_work,
-                route_number=int(route_number),
-                user_id=session['user_id']
-            )
-            db.session.add(new_work_time)
-            db.session.commit()
+    try:
+        new_work_time = WorkTime(
+            start_of_work=start_of_work,
+            end_of_work=end_of_work,
+            route_number=int(route_number),
+            user_id=session['user_id']
+        )
+        db.session.add(new_work_time)
+        db.session.commit()
 
-            new_locomotive = Locomotive(
-                locomotive_number=int(locomotive_number),
-                driver=session['user_id']
-            )
-            db.session.add(new_locomotive)
-            db.session.commit()
+        new_locomotive = Locomotive(
+            locomotive_number=int(locomotive_number),
+            driver=session['user_id']
+        )
+        db.session.add(new_locomotive)
+        db.session.commit()
+
+        specific_weight = float(specific_weight)
+        beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
+        end_fuel_kilo = int(end_fuel_litres) * specific_weight
+        fact = beginning_fuel_kilo - end_fuel_kilo
+
+        new_fuel = Fuel(
+            beginning_fuel_liters=int(beginning_fuel_liters),
+            beginning_fuel_kilo=beginning_fuel_kilo,
+            end_fuel_litres=int(end_fuel_litres),
+            end_fuel_kilo=end_fuel_kilo,
+            specific_weight=float(specific_weight),
+            fact=fact,
+            # norm=total_norm,
+            locomotive_id=new_locomotive.id
+        )
+
+        db.session.add(new_fuel)
+
+        workparks_list = parse_workparks(workparks_input)
+        reserve_routes_list = parse_reserve_routes(reserve_routes_input)
+        total_norm = calculate_total_norm(workparks_list, reserve_routes_list, reserve_time)
+        new_fuel.norm = total_norm
+
+        db.session.add_all(workparks_list)
+        db.session.add_all(reserve_routes_list)
+        db.session.commit()
+
+        flash(f'Смена успешно создана', 'success')
+        return redirect(url_for('return_profile'))
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
+
+    return render_template('data_form.html', data_form=data_form)
 
             # settings = Settings.query.first()
             # park_norms = get_park_norms(settings)
@@ -299,33 +338,6 @@ def create_work_form_post():
             #     workparks_list.append(calculated_norm)
             #
             # total_norm = sum(workparks_list)
-
-            specific_weight = float(specific_weight)
-            beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
-            end_fuel_kilo = int(end_fuel_litres) * specific_weight
-            fact = beginning_fuel_kilo - end_fuel_kilo
-
-            new_fuel = Fuel(
-                beginning_fuel_liters=int(beginning_fuel_liters),
-                beginning_fuel_kilo=beginning_fuel_kilo,
-                end_fuel_litres=int(end_fuel_litres),
-                end_fuel_kilo=end_fuel_kilo,
-                specific_weight=float(specific_weight),
-                fact=fact,
-                norm=total_norm,
-                locomotive_id=new_locomotive.id
-            )
-            db.session.add(new_fuel)
-            db.session.commit()
-
-            flash(f'Смена успешно создана', 'success')
-            return redirect(url_for('return_profile'))
-
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
-
-    return render_template('data_form.html', data_form=data_form)
 
 
 @app.route('/settings', methods=['GET'])

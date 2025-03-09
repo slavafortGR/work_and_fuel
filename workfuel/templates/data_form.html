@@ -62,6 +62,27 @@
                     <span class="text-danger">{{ error }}</span>
             {% endfor %}
         </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Рабочие парки:</strong></label>
+            {{ data_form.work_parks(class="form-control", required=False) }}
+            {% for error in data_form.work_parks.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Резервные пробеги:</strong></label>
+            {{ data_form.reserve_routes(class="form-control", required=False) }}
+            {% for error in data_form.reserve_routes.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label"><strong>Общее время на резервные пробеги:</strong></label>
+            {{ data_form.reserve_time(class="form-control", required=False) }}
+            {% for error in data_form.reserve_time.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
         <input type="submit" class="btn btn-success" value="Создать">
     </form>
 </div>
