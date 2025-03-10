@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField, DateTimeLocalField,\
-    SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField, \
+    DateTimeLocalField, \
+    SelectMultipleField, SelectField, DecimalField
 from wtforms.validators import DataRequired, Optional, EqualTo, Length
 
 
@@ -24,31 +25,29 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
 
-class DataForm(FlaskForm):
-    start_of_work = DateTimeLocalField('Start work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M', render_kw={"placeholder": "дд/мм/гггг"})
+class MainDataForm(FlaskForm):
+    start_of_work = DateTimeLocalField('Start work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     end_of_work = DateTimeLocalField('End work', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     route_number = IntegerField('Route number', validators=[DataRequired()],
                                 render_kw={'placeholder': 'Введите номер маршрута состоящий из семи цифр'})
     locomotive_number = IntegerField('Locomotive', validators=[DataRequired()],
                                      render_kw={'placeholder': 'Введите номер тепловоза'})
-    # activities = SelectMultipleField('Выберите рабочие парки', choices=[
-    #     (1, 'Парк "Л"'), (2, 'Парк "Г"'), (3, 'Парк "Е"'), (4, 'Парк "З"'),
-    #     (5, 'Парк "Втормет"'), (6, 'Парк "Нижний"'), (7, 'Парк "ВЧД-3"'),
-    #     (8, 'Парк "ТЧ-1"'), (9, 'Парк "ТЧ-8"'), (10, 'Парк "Днепр Главный"'),
-    #     (11, 'Парк "Горветка"'), (12, 'Парк "Диёвка"'), (13, 'Парк "Горяиново"'),
-    #     (14, 'Парк "Кайдакская"'), (15, 'Парк "Нижнеднепровск"'), (16, 'Парк "Н.Д.Пристань"'),
-    #     (17, 'Парк "Лотсманка"'), (18, 'Парк "Встречный"'), (19, 'Парк "Днепр Грузовой"'),
-    #     (20, 'Парк "Обводная"'), (21, 'Парк "Лиски"'), (22, 'Парк "Привольное"'),
-    #     (23, 'Парк "Рясная"'), (24, 'Парк "Сухачёвка"'), (25, 'Горячий прстой'),
-    #     (26, 'Холодный простой')
-    # ], coerce=int)
-    beginning_fuel_liters = IntegerField('Beginning Fuel Liters', validators=[DataRequired()],
-                                         render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
-    end_fuel_litres = FloatField('End Fuel Litres', validators=[DataRequired()],
-                                 render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
-    specific_weight = FloatField('Specific Weight', validators=[DataRequired()], render_kw={
-        'placeholder': 'Введите переводной коэффициент: 0.___'})
-    add_fuel = IntegerField('Add Fuel', validators=[Optional()],
+
+
+class AdditionalDataForm(FlaskForm):
+    work_park = SelectField('Рабочий парк', choices=[('park1', 'Парк 1'), ('park2', 'Парк 2')],
+                            validators=[DataRequired()])
+    work_time = DecimalField('Время работы в парке (часы)', validators=[DataRequired()])
+    reserve_section = SelectField('Резервный пробег', choices=[('section1', 'Участок 1'), ('section2', 'Участок 2')],
+                                  validators=[DataRequired()])
+    reserve_time = DecimalField('Общее время на резервный пробег (часы)', validators=[DataRequired()])
+    start_fuel_litres = DecimalField('Дизельное топливо (принял)', validators=[DataRequired()],
+                                     render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
+    end_fuel_litres = DecimalField('Дизельное топливо (сдал)', validators=[DataRequired()],
+                                   render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
+    specific_weight = DecimalField('Удельный вес топлива', validators=[DataRequired()],
+                                   render_kw={'placeholder': 'Введите переводной коэффициент: 0.___'})
+    add_fuel = StringField('Экипировка', validators=[DataRequired()],
                             render_kw={'placeholder': 'Введите количество топлива в литрах (если была экипировка)'})
     submit = SubmitField('Create')
 

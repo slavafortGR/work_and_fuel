@@ -1,40 +1,11 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="content-wrapper">
-    <h2>Создать рабочую смену</h2>
+<h2>Создать рабочую смену - Страница 2</h2>
 
-    <form action="/create" method="POST">
+    <form action="/create_2" method="POST">
         <div class="mb-3">
             {{ data_form.hidden_tag() }}
-            <label class="form-label"><strong>Начало смены:</strong></label>
-            {{ data_form.start_of_work(class="form-control", required=True, type="datetime-local") }}
-            {% for error in data_form.start_of_work.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Окончание смены:</strong></label>
-            {{ data_form.end_of_work(class="form-control", required=True, type="datetime-local") }}
-            {% for error in data_form.end_of_work.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Номер маршрута: </strong></label>
-            {{ data_form.route_number(class="form-control", required=True) }}
-            {% for error in data_form.route_number.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Тепловоз: ЧМЭ3 -</strong></label>
-            {{ data_form.locomotive_number(class="form-control", required=True) }}
-            {% for error in data_form.locomotive_number.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
             <label class="form-label"><strong>Дизельное топливо принял:</strong></label>
             {{ data_form.beginning_fuel_liters(class="form-control", required=True) }}
             {% for error in data_form.beginning_fuel_liters.errors %}
@@ -83,7 +54,7 @@
                 <span class="text-danger">{{ error }}</span>
             {% endfor %}
         </div>
-        <input type="submit" class="btn btn-success" value="Создать">
+
+        <input type="submit" class="btn btn-success" value="Создать смену">
     </form>
-</div>
 {% endblock %}
