@@ -35,13 +35,13 @@ class MainDataForm(FlaskForm):
 
 
 class AdditionalDataForm(FlaskForm):
-    work_park = SelectField('Рабочий парк', choices=[('park1', 'Парк 1'), ('park2', 'Парк 2')],
+    work_parks = SelectField('Рабочие парки', choices=[('park1', 'Парк 1'), ('park2', 'Парк 2')],
                             validators=[DataRequired()])
     work_time = DecimalField('Время работы в парке (часы)', validators=[DataRequired()])
     reserve_section = SelectField('Резервный пробег', choices=[('section1', 'Участок 1'), ('section2', 'Участок 2')],
                                   validators=[DataRequired()])
     reserve_time = DecimalField('Общее время на резервный пробег (часы)', validators=[DataRequired()])
-    start_fuel_litres = DecimalField('Дизельное топливо (принял)', validators=[DataRequired()],
+    beginning_fuel_liters = DecimalField('Дизельное топливо (принял)', validators=[DataRequired()],
                                      render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = DecimalField('Дизельное топливо (сдал)', validators=[DataRequired()],
                                    render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
