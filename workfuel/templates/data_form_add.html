@@ -3,67 +3,78 @@
 {% block content %}
 <h2>Создать рабочую смену - Страница 2</h2>
 
-    <form action="/create_2" method="POST">
-        <div class="mb-3">
-            {{ data_form_add.hidden_tag() }}
-            <label class="form-label"><strong>Рабочие парки: </strong></label>
-            {{ data_form_add.work_parks(class="form-control", required=False) }}
-            {% for error in data_form_add.work_parks.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Время работы в парке (часы, минуты): </strong></label>
-            {{ data_form_add.work_time(class="form-control", required=False) }}
-            {% for error in data_form_add.work_time.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Резервные пробеги: </strong></label>
-            {{ data_form_add.reserve_section(class="form-control", required=False) }}
-            {% for error in data_form_add.reserve_section.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Общее время на резервные пробеги: </strong></label>
-            {{ data_form_add.reserve_time(class="form-control", required=False) }}
-            {% for error in data_form_add.reserve_time.errors %}
-                <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Дизельное топливо принял: </strong></label>
-            {{ data_form_add.beginning_fuel_liters(class="form-control", required=True) }}
-            {% for error in data_form_add.beginning_fuel_liters.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Дизельное топливо сдал: </strong></label>
-            {{ data_form_add.end_fuel_litres(class="form-control", required=True) }}
-            {% for error in data_form_add.end_fuel_litres.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Удельный вес топлива: </strong></label>
-            {{ data_form_add.specific_weight(class="form-control", required=True) }}
-            {% for error in data_form_add.specific_weight.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
-        <div class="mb-3">
-            <label class="form-label"><strong>Экипировка: </strong></label>
-            {{ data_form_add.add_fuel(class="form-control", required=False) }}
-            {% for error in data_form_add.add_fuel.errors %}
-                    <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-        </div>
+<form action="/create_2" method="POST">
+    {{ data_form_add.hidden_tag() }}
 
+    <div class="mb-3">
+        <label class="form-label"><strong>Рабочие парки: </strong></label>
+        <div id="work-parks-dropdown" class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Выберите парки
+            </button>
+            <ul class="dropdown-menu" id="work-parks-list">
+                {% for value, label in data_form_add.work_parks.choices %}
+                <li>
+                    <input type="checkbox" class="work-park-checkbox" value="{{ value }}"> {{ label }}
+                    <input type="number" class="form-control work-time" placeholder="Время (часы)" disabled>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
+    <div class="mb-3">
+        <label class="form-label"><strong>Резервные пробеги: </strong></label>
+        <div id="reserve-section-dropdown" class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Выберите участки
+            </button>
+            <ul class="dropdown-menu" id="reserve-sections-list">
+                {% for value, label in data_form_add.reserve_section.choices %}
+                <li>
+                    <input type="checkbox" class="reserve-section-checkbox" value="{{ value }}"> {{ label }}
+                    <input type="number" class="form-control reserve-time" placeholder="Время (часы)" disabled>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
-        <input type="submit" class="btn btn-success" value="Создать смену">
-    </form>
+    <div class="mb-3">
+        <label class="form-label"><strong>Дизельное топливо принял: </strong></label>
+        {{ data_form_add.beginning_fuel_liters(class="form-control", required=True) }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label"><strong>Дизельное топливо сдал: </strong></label>
+        {{ data_form_add.end_fuel_litres(class="form-control", required=True) }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label"><strong>Удельный вес топлива: </strong></label>
+        {{ data_form_add.specific_weight(class="form-control", required=True) }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label"><strong>Экипировка: </strong></label>
+        {{ data_form_add.add_fuel(class="form-control", required=False) }}
+    </div>
+
+    <input type="submit" class="btn btn-success" value="Создать смену">
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".work-park-checkbox").forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                let timeInput = this.nextElementSibling;
+                timeInput.disabled = !this.checked;
+            });
+        });
+
+        document.querySelectorAll(".reserve-section-checkbox").forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                let timeInput = this.nextElementSibling;
+                timeInput.disabled = !this.checked;
+            });
+        });
+    });
+</script>
 {% endblock %}

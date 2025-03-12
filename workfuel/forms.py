@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateTimeField, \
     DateTimeLocalField, \
-    SelectMultipleField, SelectField, DecimalField
+    SelectMultipleField, SelectField, DecimalField, FieldList, FormField
 from wtforms.validators import DataRequired, Optional, EqualTo, Length
 
 
@@ -34,22 +34,36 @@ class MainDataForm(FlaskForm):
                                      render_kw={'placeholder': 'Введите номер тепловоза'})
 
 
+class WorkTimeForm(FlaskForm):
+    park = StringField('Парк', validators=[DataRequired()])
+    time = DecimalField('Время работы (часы)', validators=[DataRequired()])
+
+class ReserveSectionForm(FlaskForm):
+    section = StringField('Резервный участок', validators=[DataRequired()])
+    time = DecimalField('Время в пути (часы)', validators=[DataRequired()])
+
 class AdditionalDataForm(FlaskForm):
-    work_parks = SelectField('Рабочие парки', choices=[('park1', 'Парк 1'), ('park2', 'Парк 2')],
-                            validators=[DataRequired()])
-    work_time = DecimalField('Время работы в парке (часы)', validators=[DataRequired()])
-    reserve_section = SelectField('Резервный пробег', choices=[('section1', 'Участок 1'), ('section2', 'Участок 2')],
-                                  validators=[DataRequired()])
-    reserve_time = DecimalField('Общее время на резервный пробег (часы)', validators=[DataRequired()])
+    work_parks = SelectField(
+        'Рабочие парки',
+         choices=[('park1', 'Парк 1'), ('park2', 'Парк 2')],
+         validators=[DataRequired()],
+         render_kw={'class': 'form-select'}
+    )
+    work_times = FieldList(FormField(WorkTimeForm), min_entries=1)
+
+    reserve_section = SelectMultipleField('Резервные пробеги', choices=[('section1', 'Участок 1'), ('section2', 'Участок 2')],
+                                           validators=[DataRequired()])
+    reserve_times = FieldList(FormField(ReserveSectionForm), min_entries=1)
+
     beginning_fuel_liters = DecimalField('Дизельное топливо (принял)', validators=[DataRequired()],
-                                     render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
+                                         render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     end_fuel_litres = DecimalField('Дизельное топливо (сдал)', validators=[DataRequired()],
                                    render_kw={'placeholder': 'Введите объём дизельного топлива в литрах'})
     specific_weight = DecimalField('Удельный вес топлива', validators=[DataRequired()],
                                    render_kw={'placeholder': 'Введите переводной коэффициент: 0.___'})
     add_fuel = StringField('Экипировка', validators=[DataRequired()],
-                            render_kw={'placeholder': 'Введите количество топлива в литрах (если была экипировка)'})
-    submit = SubmitField('Create')
+                           render_kw={'placeholder': 'Введите количество топлива в литрах (если была экипировка)'})
+    submit = SubmitField('Создать смену')
 
 
 class SettingsForm(FlaskForm):
