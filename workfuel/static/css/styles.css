@@ -24,9 +24,22 @@
   width: 33.5%;
 }
 
-body {
+.body {
     background: url("/static/images/chme_background_4.jpg") no-repeat center center fixed;
     background-size: cover;
     background-position: 40% center;
     background-position: 40% top;
+}
+
+.work-hours, .work-minutes, .reserve-time, .reserve-minutes {
+    width: 80px;
+    text-align: center;
+    padding: 2px;
+}
+
+.dropdown-menu li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 5px;
 }
