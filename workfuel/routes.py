@@ -210,37 +210,88 @@ def create_add_form_get():
 
     data_form_add = AdditionalDataForm(request.form)
 
-    # # data_form_add = session['main_form_data']
-    # data_form_add.work_parks = data_form_add['work_parks']
-    # data_form_add.work_time = data_form_add['work_time']
-    # data_form_add.reserve_section = data_form_add['reserve_section']
-    # data_form_add.reserve_time = data_form_add['reserve_time']
-    # data_form_add.beginning_litres = data_form_add['beginning_litres']
-    # data_form_add.end_fuel_litres = data_form_add['end_fuel_litres']
-    # data_form_add.specific_weight = data_form_add['specific_weight']
-    # data_form_add.add_fuel = data_form_add['add_fuel']
-
     return render_template('data_form_add.html', data_form_add=data_form_add)
 
 
+@app.route('/create_additional_form', methods=['POST'])
+@log_exceptions
+def create_add_form_post():
+    if 'main_form_data' not in session:
+        return redirect(url_for('create_main_form_get'))
 
-# @app.route('/create_additional_form', methods=['GET'])
-# @log_exceptions
-# def create_work_form_post():
-#     user_id = session.get('user_id')
-#     data_form = MainDataForm(request.form)
-#
-#     start_of_work = datetime.strptime(request.form.get('start_of_work', ''), '%Y-%m-%dT%H:%M')
-#     end_of_work = datetime.strptime(request.form.get('end_of_work', ''), '%Y-%m-%dT%H:%M')
-#     route_number = request.form.get('route_number', '').strip()
-#     locomotive_number = request.form.get('locomotive_number', '').strip()
-#     # beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
-#     # end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
-#     # specific_weight = request.form.get('specific_weight', '').strip()
-#     # add_fuel = request.form.get('add_fuel', '')
-#     # workparks_input = request.form.get('workparks', '').strip()
-#     # reserve_routes_input = request.form.get('reserve_time', '').strip()
-#     #
+    data_form_add = AdditionalDataForm(request.form)
+
+    if data_form_add.validate_on_submit():
+        main_form_data = session['main_form_data']
+
+    try:
+        new_worktime = WorkTime(
+            start_of_work = datetime.strptime(main_form_data['start_of_work'], '%Y-%m-%d %H:%M'),
+            end_of_work = datetime.strptime(main_form_data['end_of_work'], '%Y-%m-%d %H:%M'),
+            route_number = main_form_data['route_number'],
+            user_id = session.get('user_id')
+        )
+
+        db.session.add(new_worktime)
+        db.session.flush()
+
+        new_locomotive = Locomotive(
+            locomotive_number=int(main_form_data['locomotive_number']),
+            driver=session['user_id']
+        )
+
+        db.session.add(new_locomotive)
+        db.session.flush()
+
+        workparks_input = request.form.get('workparks', '').strip()
+        reserve_routes_input = request.form.get('reserve_time', '').strip()
+        beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
+        end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
+        specific_weight = request.form.get('specific_weight', '').strip()
+        specific_weight = float(specific_weight)
+        beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
+        end_fuel_kilo = int(end_fuel_litres) * specific_weight
+        fact = beginning_fuel_kilo - end_fuel_kilo
+        add_fuel = request.form.get('add_fuel', '')
+
+        for park in workparks_input.split(','):
+            park_name = park.strip()
+                if park_name:
+                    new_park = WorkPark(name=park_name, work_time_id=new_work_time.id)
+                    db.session.add(new_park)
+
+        total_norm = 0
+        if reserve_routes_input:
+            for route in reserve_routes_input.split(','):
+                route_name = route.strip()
+                    if route_name:
+                        norm = get_fuel_norm(route_name)
+                        total_norm += norm
+                        new_reserve = ReserveRoute(name=route_name, norm=norm, work_time_id=new_work_time.id)
+                        db.session.add(new_reserve)
+
+        new_fuel = Fuel(
+        beginning_fuel_liters=int(beginning_fuel_liters),
+        beginning_fuel_kilo=beginning_fuel_kilo,
+        end_fuel_litres=int(end_fuel_litres),
+        end_fuel_kilo=end_fuel_kilo,
+        specific_weight=float(specific_weight),
+        fact=fact,
+        norm=total_norm,
+        locomotive_id=new_locomotive.id
+
+        db.session.add(new_fuel)
+        db.session.commit()
+
+        flash(f'Смена успешно создана', 'success')
+        return redirect(url_for('return_profile'))
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
+        return render_template('data_form.html', data_form_add=data_form_add)
+
+
 #     # errors = validate_create_work_form(start_of_work, end_of_work, route_number,
 #     #                                    locomotive_number, beginning_fuel_liters,
 #     #                                    end_fuel_litres, specific_weight
@@ -261,69 +312,7 @@ def create_add_form_get():
 #     # if not validate_data_form(route_number, locomotive_number, beginning_fuel_liters,
 #     #                           end_fuel_litres, specific_weight):
 #     #     return render_template('data_form.html', data_form=data_form)
-#     #
-#     # if data_form.validate_on_submit():
-#     #     try:
-#     #         new_work_time = WorkTime(
-#     #             start_of_work=start_of_work,
-#     #             end_of_work=end_of_work,
-#     #             route_number=int(route_number),
-#     #             user_id=session['user_id']
-#     #         )
-#     #         db.session.add(new_work_time)
-#     #         db.session.commit()
-#     #
-#     #         new_locomotive = Locomotive(
-#     #             locomotive_number=int(locomotive_number),
-#     #             driver=session['user_id']
-#     #         )
-#     #         db.session.add(new_locomotive)
-#     #         db.session.commit()
-#     #
-#     #         specific_weight = float(specific_weight)
-#     #         beginning_fuel_kilo = int(beginning_fuel_liters) * specific_weight
-#     #         end_fuel_kilo = int(end_fuel_litres) * specific_weight
-#     #         fact = beginning_fuel_kilo - end_fuel_kilo
-#     #
-#     #         new_fuel = Fuel(
-#     #             beginning_fuel_liters=int(beginning_fuel_liters),
-#     #             beginning_fuel_kilo=beginning_fuel_kilo,
-#     #             end_fuel_litres=int(end_fuel_litres),
-#     #             end_fuel_kilo=end_fuel_kilo,
-#     #             specific_weight=float(specific_weight),
-#     #             fact=fact,
-#     #             # norm=total_norm,
-#     #             locomotive_id=new_locomotive.id
-#     #         )
-#     #
-#     #         db.session.add(new_fuel)
-#     #
-#     #         for park in workparks_input.split(','):
-#     #             park_name = park.strip()
-#     #             if park_name:
-#     #                 new_park = WorkPark(name=park_name, work_time_id=new_work_time.id)
-#     #                 db.session.add(new_park)
-#     #
-#     #         total_norm = 0
-#     #         if reserve_routes_input:
-#     #             for route in reserve_routes_input.split(','):
-#     #                 route_name = route.strip()
-#     #                 if route_name:
-#     #                     norm = get_fuel_norm(route_name)
-#     #                     total_norm += norm
-#     #                     new_reserve = ReserveRoute(name=route_name, norm=norm, work_time_id=new_work_time.id)
-#     #                     db.session.add(new_reserve)
-#     #
-#     #         db.session.commit()
-#     #
-#     #         flash(f'Смена успешно создана', 'success')
-#     #         return redirect(url_for('return_profile'))
-#     #
-#     #     except Exception as e:
-#     #         db.session.rollback()
-#     #         flash(f'Ошибка при сохранении данных: {str(e)}', 'danger')
-#
-#     return render_template('data_form.html', data_form=data_form)
+
 
 
 @app.route('/settings', methods=['GET'])

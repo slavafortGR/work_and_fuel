@@ -63,31 +63,10 @@
         {{ data_form_add.add_fuel(class="form-control", required=False) }}
     </div>
 
+    <button type="button" class="btn btn-secondary" onclick="history.back()">Назад</button>
     <input type="submit" class="btn btn-success" value="Создать смену">
 </form>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".work-park-checkbox").forEach(function (checkbox) {
-            checkbox.addEventListener("change", function () {
-                let hoursInput = this.closest("li").querySelector(".work-hours");
-                let minutesInput = this.closest("li").querySelector(".work-minutes");
-
-                hoursInput.disabled = !this.checked;
-                minutesInput.disabled = !this.checked;
-            });
-        });
-
-        document.querySelectorAll(".reserve-section-checkbox").forEach(function (checkbox) {
-            checkbox.addEventListener("change", function () {
-                let hoursInput = this.closest("li").querySelector(".reserve-hours");
-                let minutesInput = this.closest("li").querySelector(".reserve-minutes");
-
-                hoursInput.disabled = !this.checked;
-                minutesInput.disabled = !this.checked;
-            });
-        });
-    });
-</script>
+<script src="../create_add_form.js"></script>
 
 {% endblock %}
