@@ -15,10 +15,10 @@
             <ul class="dropdown-menu" id="work-parks-list">
                 {% for value, label in data_form_add.work_parks.choices %}
                 <li class="d-flex column align-items-start">
-                    <input type="checkbox" class="work-park-checkbox me-2" value="{{ value }}"> {{ label }}
+                    <input type="checkbox" name="workparks" class="work-park-checkbox me-2" value="{{ value }}"> {{ label }}
                     <div class="d-flex ms-2">
-                        <input type="number" class="form-control work-hours me-1" placeholder="Часы" min="0" disabled>
-                        <input type="number" class="form-control work-minutes" placeholder="Минуты" min="0" max="59" disabled>
+                        <input type="number" name="work_time_hours_{{ value }}" class="form-control work-hours me-1" placeholder="Часы" min="0" disabled>
+                        <input type="number" name="work_time_minutes_{{ value }}" class="form-control work-minutes" placeholder="Минуты" min="0" max="59" disabled>
                     </div>
                 </li>
                 {% endfor %}
@@ -35,10 +35,10 @@
             <ul class="dropdown-menu" id="reserve-sections-list">
                 {% for value, label in data_form_add.reserve_section.choices %}
                 <li class="d-flex column align-items-start">
-                    <input type="checkbox" class="reserve-section-checkbox me-2" value="{{ value }}"> {{ label }}
+                    <input type="checkbox" name="reserve_section" class="reserve-section-checkbox me-2" value="{{ value }}"> {{ label }}
                     <div class="d-flex ms-2">
-                        <input type="number" class="form-control reserve-hours me-1" placeholder="Часы" min="0" disabled>
-                        <input type="number" class="form-control reserve-minutes" placeholder="Минуты" min="0" max="59" disabled>
+                        <input type="number" name="work_time_hours_{{ value }}" class="form-control reserve-hours me-1" placeholder="Часы" min="0" disabled>
+                        <input type="number" name="work_time_minutes_{{ value }}" class="form-control reserve-minutes" placeholder="Минуты" min="0" max="59" disabled>
                     </div>
                 </li>
                 {% endfor %}

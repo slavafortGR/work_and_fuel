@@ -243,8 +243,16 @@ def create_add_form_post():
         db.session.add(new_locomotive)
         db.session.flush()
 
-        workparks_input = request.form.get('workparks', '').strip()
-        reserve_routes_input = request.form.get('reserve_time', '').strip()
+        workparks_input = request.form.getlist('workparks')
+        work_times_hours = request.form.getlist('work_times_hours')
+        work_times_minutes = request.form.getlist('work_times_minutes')
+        reserve_routes_input = request.form.getlist('reserve_time')
+        reserve_times_hours = request.form.getlist('reserve_times_hours')
+        reserve_times_minutes = request.form.getlist('reserve_times_minutes')
+        work_times = [(int(h), int(m)) for h, m in zip(work_times_hours, work_times_minutes)]
+        reserve_times = [(int(h), int(m)) for h, m in zip(reserve_times_hours, reserve_times_minutes)]
+        work_parks_data = list(zip(workparks_input, work_times))
+        reserve_routes_data = list(zip(reserve_routes_input, reserve_times))
         beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
         end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
         specific_weight = request.form.get('specific_weight', '').strip()
