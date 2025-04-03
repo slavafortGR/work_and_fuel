@@ -17,8 +17,8 @@
                 <li class="d-flex column align-items-start">
                     <input type="checkbox" name="workparks" class="work-park-checkbox me-2" value="{{ value }}"> {{ label }}
                     <div class="d-flex ms-2">
-                        <input type="number" name="work_time_hours_{{ value }}" class="form-control work-hours me-1" placeholder="Часы" min="0" disabled>
-                        <input type="number" name="work_time_minutes_{{ value }}" class="form-control work-minutes" placeholder="Минуты" min="0" max="59" disabled>
+                        <input type="number" name="work_time_hours {{ value }}" class="form-control work-hours me-1" placeholder="Часы" min="0" disabled>
+                        <input type="number" name="work_time_minutes { value }}" class="form-control work-minutes" placeholder="Минуты" min="0" max="59" disabled>
                     </div>
                 </li>
                 {% endfor %}
@@ -37,8 +37,8 @@
                 <li class="d-flex column align-items-start">
                     <input type="checkbox" name="reserve_section" class="reserve-section-checkbox me-2" value="{{ value }}"> {{ label }}
                     <div class="d-flex ms-2">
-                        <input type="number" name="work_time_hours_{{ value }}" class="form-control reserve-hours me-1" placeholder="Часы" min="0" disabled>
-                        <input type="number" name="work_time_minutes_{{ value }}" class="form-control reserve-minutes" placeholder="Минуты" min="0" max="59" disabled>
+                        <input type="number" name="reserve_times_hours {{ value }}" class="form-control reserve-hours me-1" placeholder="Часы" min="0" disabled>
+                        <input type="number" name="reserve_times_minutes {{ value }}" class="form-control reserve-minutes" placeholder="Минуты" min="0" max="59" disabled>
                     </div>
                 </li>
                 {% endfor %}

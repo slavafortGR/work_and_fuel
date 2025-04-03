@@ -4,7 +4,7 @@ from flask import render_template, redirect, request, url_for, flash, session
 from workfuel import app, db
 from workfuel.forms import LoginForm, RegistrationForm, MainDataForm, SettingsForm, AdditionalDataForm
 from workfuel.logger import logger
-from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, SettingsTrack, WorkPark
+from workfuel.models import User, WorkTime, Locomotive, Fuel, Settings, SettingsTrack, WorkPark, ReserveRun
 from workfuel.utils import get_monthly_work_time, existing_work_time, PARK_NAMES
 from workfuel.helpers import validate_settings_form, validate_create_work_form, validate_register_form, \
     validate_data_form, convert_to_decimal_hours, validate_work_time, get_park_norms
@@ -246,13 +246,13 @@ def create_add_form_post():
         workparks_input = request.form.getlist('workparks')
         work_times_hours = request.form.getlist('work_times_hours')
         work_times_minutes = request.form.getlist('work_times_minutes')
-        reserve_routes_input = request.form.getlist('reserve_time')
+        reserve_section_input = request.form.getlist('reserve_section')
         reserve_times_hours = request.form.getlist('reserve_times_hours')
         reserve_times_minutes = request.form.getlist('reserve_times_minutes')
         work_times = [(int(h), int(m)) for h, m in zip(work_times_hours, work_times_minutes)]
         reserve_times = [(int(h), int(m)) for h, m in zip(reserve_times_hours, reserve_times_minutes)]
         work_parks_data = list(zip(workparks_input, work_times))
-        reserve_routes_data = list(zip(reserve_routes_input, reserve_times))
+        reserve_routes_data = list(zip(reserve_section_input, reserve_times))
         beginning_fuel_liters = request.form.get('beginning_fuel_liters', '').strip()
         end_fuel_litres = request.form.get('end_fuel_litres', '').strip()
         specific_weight = request.form.get('specific_weight', '').strip()
@@ -262,21 +262,26 @@ def create_add_form_post():
         fact = beginning_fuel_kilo - end_fuel_kilo
         add_fuel = request.form.get('add_fuel', '')
 
-        for park in workparks_input.split(','):
-            park_name = park.strip()
-                if park_name:
-                    new_park = WorkPark(name=park_name, work_time_id=new_work_time.id)
-                    db.session.add(new_park)
+        for park_name, (hours, minutes) in work_parks_data:
+            if park_name:
+                new_work_time = WorkTime(hours=hours, minutes=minutes)
+                db.session.add(new_work_time)
+                db.session.flush()
 
-        total_norm = 0
-        if reserve_routes_input:
-            for route in reserve_routes_input.split(','):
-                route_name = route.strip()
-                    if route_name:
-                        norm = get_fuel_norm(route_name)
-                        total_norm += norm
-                        new_reserve = ReserveRoute(name=route_name, norm=norm, work_time_id=new_work_time.id)
-                        db.session.add(new_reserve)
+                new_park = WorkPark(park_name=park_name, work_time_id=new_work_time.id)
+                db.session.add(new_park)
+
+        db.session.commit()
+
+        # total_norm = 0
+        # if reserve_section_input:
+        #     for route in reserve_section_input:
+        #         route_name = route.strip()
+        #         if route_name:
+        #             norm = get_fuel_norm(route_name)
+        #             total_norm += norm
+        #             new_reserve = ReserveRun(name=route_name, norm=norm, work_time_id=new_work_time.id)
+        #             db.session.add(new_reserve)
 
         new_fuel = Fuel(
         beginning_fuel_liters=int(beginning_fuel_liters),
@@ -285,8 +290,8 @@ def create_add_form_post():
         end_fuel_kilo=end_fuel_kilo,
         specific_weight=float(specific_weight),
         fact=fact,
-        norm=total_norm,
-        locomotive_id=new_locomotive.id
+        # norm=total_norm,
+        locomotive_id=new_locomotive.id)
 
         db.session.add(new_fuel)
         db.session.commit()
