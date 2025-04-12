@@ -273,6 +273,16 @@ def create_add_form_post():
 
         db.session.commit()
 
+        for reserve_section, (hours, minutes) in reserve_routes_data:
+            if reserve_section:
+                new_reverse_run = ReserveRun(locomotive_id=current_locomotive_id, travel_time=hours + minutes / 60)
+                db.session.add(new_reserve_run)
+                db.session.flush()  # Получаем ID для связи с сегментами
+
+                new_segment = ReserveRunSegment(track_name=reserve_section,
+                                                fuel_norm=calculate_fuel_norm(reserve_section),
+                                                reserve_run_id=new_reserve_run.id)
+                db.session.add(new_segment)
         # total_norm = 0
         # if reserve_section_input:
         #     for route in reserve_section_input:
