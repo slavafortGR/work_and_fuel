@@ -27,23 +27,35 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label"><strong>Резервные пробеги: </strong></label>
-        <div id="reserve-section-dropdown" class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Выберите участки
-            </button>
-            <ul class="dropdown-menu" id="reserve-sections-list">
-                {% for value, label in data_form_add.reserve_section.choices %}
-                <li class="d-flex column align-items-start">
-                    <input type="checkbox" name="reserve_section" class="reserve-section-checkbox me-2" value="{{ value }}"> {{ label }}
-                    <div class="d-flex ms-2">
-                        <input type="number" name="reserve_times_hours {{ value }}" class="form-control reserve-hours me-1" placeholder="Часы" min="0" disabled>
-                        <input type="number" name="reserve_times_minutes {{ value }}" class="form-control reserve-minutes" placeholder="Минуты" min="0" max="59" disabled>
+        <div id="intervals-container">
+            <div class="interval-block">
+                <button type="button" class="btn btn-danger btn-sm remove interval" style="display: none;">x</button>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Маневровый участок</label>
+                        <select class="form-control place-select" name="interval[0][place]" required>
+                            <option value>Выберите маневровый район</option>
+                            <option value="1">Парк "Л"</option>
+                            <option value="2">Парк "Г"</option>
+                            <option value="3">Парк "Е"</option>
+                            <option value="4">Парк "З"</option>
+                            <option value="4">Парк "Втормет"</option>
+                        </select>
                     </div>
-                </li>
-                {% endfor %}
-            </ul>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Время начала</label>
+                        <input type="time" class="form-control start-time" name="interval[0][start_time]" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Время окончания</label>
+                        <input type="time" class="form-control start-time" name="interval[0][end_time]" required>
+                    </div>
+                </div>
+            </div>
         </div>
+        <button id="add-interval" class="btn btn-success mt-2">Добавить участок/простой </button>
     </div>
 
     <div class="mb-3">
